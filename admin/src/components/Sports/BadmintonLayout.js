@@ -106,7 +106,7 @@ const SportsLayout = () => {
   }, []);
 
   return (
-    <Grid sx={{ padding: "30px" }}>
+    <Grid sx={{ padding: "20px" }}>
       <Paper sx={{ padding: "30px", boxShadow: "none" }}>
         <Box
           sx={{

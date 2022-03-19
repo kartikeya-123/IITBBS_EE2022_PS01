@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   Grid,
   Box,
@@ -43,7 +43,7 @@ const SportsLayout = () => {
         };
         return event;
       });
-      console.log(eventDocs);
+      // console.log(eventDocs);
       setEvents(eventDocs);
     });
 
@@ -106,7 +106,7 @@ const SportsLayout = () => {
   }, []);
 
   return (
-    <Grid sx={{ padding: "30px" }}>
+    <Grid sx={{ padding: "20px" }}>
       <Paper sx={{ padding: "30px", boxShadow: "none" }}>
         <Box
           sx={{
@@ -153,7 +153,11 @@ const SportsLayout = () => {
 
 const SportEvent = (event) => {
   const date = event?.event?.data?.time.toDate().toDateString();
+  const navigate = useNavigate();
 
+  const handleClick = () => {
+    navigate(`/sport/Cricket/${event?.event?.id}`);
+  };
   return (
     <Grid item>
       <Card
@@ -162,7 +166,9 @@ const SportEvent = (event) => {
           height: "150px",
           borderRadius: "0px",
           boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
+          cursor: "pointer",
         }}
+        onClick={handleClick}
       >
         <CardContent>
           <Box
@@ -187,7 +193,7 @@ const SportEvent = (event) => {
           >
             <Typography
               sx={{
-                fontSize: "20px",
+                fontSize: "18px",
                 fontWeight: 600,
                 color: "#142d52",
               }}
