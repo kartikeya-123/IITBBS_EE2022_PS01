@@ -21,6 +21,11 @@ import {
   TableRow,
   Typography,
   Box,
+  TextField,
+  Avatar,
+  FormControlLabel,
+  Checkbox,
+  Button,
 } from "@mui/material";
 
 const CricketPageLayout = () => {
@@ -29,6 +34,11 @@ const CricketPageLayout = () => {
   const [selectedTeam, setSelectedTeam] = useState([]);
   const [currTeam, setCurrTeam] = useState(1);
 
+  const [currentInnings, setCurrentInnings] = useState([]);
+  const [currentRun, setCurrentRun] = useState(-1);
+  const [out, setOut] = useState(-1);
+  const runs = [0, 1, 2, 3, 4, 5, 6];
+
   const initData = async () => {
     // const cricketRef = collection(db, "Cricket");
     const eventRef = doc(db, "Cricket", matchId);
@@ -36,6 +46,8 @@ const CricketPageLayout = () => {
     const data = eventDoc.data();
     setEvent(data);
     setSelectedTeam(data?.playersA);
+    if (data?.innings === 1) setCurrentInnings(data?.playersA);
+    else setCurrentInnings(data?.playersB);
     console.log(eventDoc.data());
   };
 
@@ -51,6 +63,17 @@ const CricketPageLayout = () => {
     } else setSelectedTeam(event.playersB);
   };
 
+  const handleOut = (n) => {
+    console.log(n);
+    if (out !== n) setOut(n);
+    else setOut(-1);
+  };
+
+  const getScore = () => {
+    if (event?.innings === 1) return event?.firstInningsScore;
+    else return event?.secondInningsScore;
+  };
+
   return (
     <div>
       {event && (
@@ -61,6 +84,8 @@ const CricketPageLayout = () => {
               margin: "auto",
               display: "flex",
               justifyContent: "space-evenly",
+              width: "100%",
+              gap: "20px",
             }}
           >
             <Card
@@ -85,10 +110,9 @@ const CricketPageLayout = () => {
                     backgroundColor: currTeam === 1 ? "#F8F9FA" : "none",
                     padding: "10px",
                   }}
+                  onClick={() => handleTeam(1)}
                 >
-                  <Typography onClick={() => handleTeam(1)}>
-                    {event?.teamA}
-                  </Typography>
+                  <Typography>{event?.teamA}</Typography>
                 </Box>
                 <Box
                   sx={{
@@ -97,10 +121,9 @@ const CricketPageLayout = () => {
                     backgroundColor: currTeam === 2 ? "#F8F9FA" : "none",
                     padding: "10px",
                   }}
+                  onClick={() => handleTeam(2)}
                 >
-                  <Typography onClick={() => handleTeam(2)}>
-                    {event?.teamB}
-                  </Typography>
+                  <Typography>{event?.teamB}</Typography>
                 </Box>
               </Box>
               <CardContent sx={{ padding: "0px 30px 30px 30px" }}>
@@ -122,6 +145,159 @@ const CricketPageLayout = () => {
                       ))}
                   </TableBody>
                 </Table>
+              </CardContent>
+            </Card>
+            <Card sx={{ height: "100%", width: "450px" }}>
+              <CardContent>
+                <Typography
+                  sx={{
+                    fontWeight: 600,
+                    textAlign: "center",
+                    fontSize: "20px",
+                    marginBottom: "20px",
+                  }}
+                >
+                  SCORE UPDATE
+                </Typography>
+                {currentInnings && (
+                  <div style={{ justifyContent: "center" }}>
+                    <Box
+                      sx={{
+                        marginBottom: "20px",
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <Typography
+                        sx={{
+                          fontWeight: 600,
+                          fontSize: "18px",
+                          color: "#17a8b0",
+                        }}
+                      >
+                        Score : {getScore() + "/" + event?.wickets}
+                      </Typography>
+                      <Typography
+                        sx={{
+                          fontWeight: 600,
+                          fontSize: "18px",
+                          color: "#17a8b0",
+                        }}
+                      >
+                        Overs : {event?.overs}
+                      </Typography>
+                    </Box>
+                    <Box
+                      sx={{
+                        justifyContent: "center",
+                        alignItems: "center",
+                        marginLeft: "30px",
+                      }}
+                    >
+                      <Stack direction="row" spacing={1}>
+                        {runs &&
+                          runs.map((run, ind) => (
+                            <Avatar
+                              key={ind}
+                              sx={{
+                                cursor: "pointer",
+                                backgroundColor:
+                                  currentRun === run ? "#007a1b" : "#b6e3bf",
+                              }}
+                              onClick={() => {
+                                setCurrentRun(run);
+                              }}
+                            >
+                              {run}
+                            </Avatar>
+                          ))}
+                      </Stack>
+                    </Box>
+                    <Box sx={{ marginTop: "20px" }}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Typography sx={{ fontWeight: 600, fontSize: "18px" }}>
+                          {" "}
+                          {currentInnings[event?.batsman1]?.name}
+                          {event?.strike === 1 ? "*" : ""}
+                        </Typography>
+                        <Typography sx={{ fontWeight: 600, fontSize: "18px" }}>
+                          {" "}
+                          {currentInnings[event?.batsman1]?.batting?.score}
+                        </Typography>
+                        <FormControlLabel
+                          label="Out"
+                          control={
+                            <Checkbox
+                              checked={out === 1}
+                              onChange={() => handleOut(1)}
+                            ></Checkbox>
+                          }
+                        />
+                      </Box>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Typography sx={{ fontWeight: 600, fontSize: "18px" }}>
+                          {" "}
+                          {currentInnings[event?.batsman2]?.name}
+                          {event?.strike === 2 ? "*" : ""}
+                        </Typography>
+                        <Typography sx={{ fontWeight: 600, fontSize: "18px" }}>
+                          {" "}
+                          {currentInnings[event?.batsman2]?.batting?.score}
+                        </Typography>
+                        <FormControlLabel
+                          label="Out"
+                          control={
+                            <Checkbox
+                              checked={out === 2}
+                              onChange={() => handleOut(2)}
+                            ></Checkbox>
+                          }
+                        />
+                      </Box>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "space-evenly",
+                          alignItems: "center",
+                          marginTop: "30px",
+                        }}
+                      >
+                        <Button
+                          sx={{
+                            color: "#FFFFFF",
+                            backgroundColor: "#D91E98",
+                            padding: "12px 20px",
+                            borderRadius: "24px",
+                            "&:hover": {
+                              color: "#FFFFFF",
+                              backgroundColor: "#D91E98",
+                            },
+                            "&:disabled": {
+                              color: "#FFFFFF",
+                              backgroundColor: "#b6bfb8",
+                            },
+                            border: "none",
+                          }}
+                          disabled={currentRun === -1}
+                        >
+                          Update
+                        </Button>
+                      </Box>
+                    </Box>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </Container>

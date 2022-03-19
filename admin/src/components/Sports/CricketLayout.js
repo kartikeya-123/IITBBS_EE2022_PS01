@@ -92,6 +92,15 @@ const SportsLayout = () => {
 
     data.playersA = data1;
     data.playersB = data2;
+    data.innings = 1;
+    data.teamAScore = 0;
+    data.teamBScore = 0;
+    data.batsman1 = 0;
+    data.batsman2 = 1;
+    data.wickets = 0;
+    data.strike = 1;
+    data.firstInningsScore = 0;
+    data.secondInningsScore = 0;
     // Data
     console.log(data);
 
