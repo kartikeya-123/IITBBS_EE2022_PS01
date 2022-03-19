@@ -9,9 +9,9 @@ import {
   Typography,
 } from "@mui/material";
 import SportsImage from "./../../assets/sport.jpg";
-import CricketImage from "./../../assets/cricket.jfif";
-import FootballImage from "./../../assets/football.jfif";
-import BadmintonImage from "./../../assets/badminton.jfif";
+
+import { useNavigate } from "react-router-dom";
+import getImage from "../../assets/images";
 
 const Layout = () => {
   return (
@@ -33,20 +33,29 @@ const Layout = () => {
             padding: "30px",
             display: "flex",
             justifyContent: "space-evenly",
+            borderRadius: "14px",
+            background: "transparent",
           }}
         >
-          <CardDetails name="Cricket" image={CricketImage} />
-          <CardDetails name="Badminton" image={BadmintonImage} />
-          <CardDetails name="Football" image={FootballImage} />
+          <CardDetails name="Cricket" />
+          <CardDetails name="Badminton" />
+          <CardDetails name="Football" />
         </Paper>
       </Grid>
     </div>
   );
 };
 
-const CardDetails = ({ name, image }) => {
+const CardDetails = ({ name }) => {
+  const navigate = useNavigate();
+  const image = getImage(name);
   return (
-    <Card sx={{ width: "400px", minHeight: "400px", cursor: "pointer" }}>
+    <Card
+      sx={{ width: "400px", minHeight: "400px", cursor: "pointer" }}
+      onClick={() => {
+        navigate(`/sport/${name}`);
+      }}
+    >
       <CardMedia
         component="img"
         height="200"
