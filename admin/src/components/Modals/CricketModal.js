@@ -19,6 +19,9 @@ import { Box } from "@mui/system";
 import { makeStyles } from "@mui/styles";
 import { styled } from "@mui/material/styles";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import DateTimePicker from "@mui/lab/DateTimePicker";
+import AdapterDateFns from "@mui/lab/AdapterDateFns";
+import LocalizationProvider from "@mui/lab/LocalizationProvider";
 
 const useStyles = makeStyles({
   content: {
@@ -47,6 +50,7 @@ const useStyles = makeStyles({
   box: {
     width: "700px",
     paddingTop: "10px",
+    gap: "10px",
   },
   logoInput: {
     height: "96px",
@@ -72,12 +76,12 @@ const InputField = styled(InputLabel)(({ theme }) => ({
   paddingBottom: "5px",
 }));
 
-const CricketEventForm = ({ show, close }) => {
+const CricketEventForm = ({ show, close, submit }) => {
   const classes = useStyles();
   const [open, setOpen] = useState(show);
   const [values, setValues] = useState({
     name: "",
-    time: "",
+    time: new Date(Date.now()),
     teamA: "",
     playersA: [],
     teamB: "",
@@ -107,7 +111,21 @@ const CricketEventForm = ({ show, close }) => {
     });
   };
 
-  const handleSubmit = (event) => {};
+  const handleSubmit = async (event) => {
+    console.log(values);
+    await submit(values);
+  };
+
+  const checkDisabled = () => {
+    console.log(values);
+    return (
+      values.name.length === 0 ||
+      values.teamA.length === 0 ||
+      values.teamB.length === 0 ||
+      values.playersA.length === 0 ||
+      values.playersB.length === 0
+    );
+  };
 
   return (
     <Dialog open={show} onClose={close}>
@@ -122,7 +140,7 @@ const CricketEventForm = ({ show, close }) => {
             <TextField
               onChange={handleChange}
               variant="filled"
-              name="length"
+              name="name"
               style={{ width: "100%", backgroundColor: "#F8F8F8" }}
               placeholder="Event Name"
               value={values.name}
@@ -133,16 +151,32 @@ const CricketEventForm = ({ show, close }) => {
           </Box>
           <Box className={classes.box}>
             <InputField>Time</InputField>
-            <TextField
+            {/* <TextField
               onChange={handleChange}
               variant="filled"
-              name="dimensions"
+              name="time"
               style={{ width: "100%", backgroundColor: "#F8F8F8" }}
               placeholder="Time of the event"
               value={values.time}
               InputProps={{ disableUnderline: true }}
               multiline
-            />
+            /> */}
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <DateTimePicker
+                value={values.time}
+                name="time"
+                onChange={(event) => {
+                  setValues({ ...values, ["time"]: event });
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    variant="filled"
+                    style={{ width: "50%", backgroundColor: "#F8F8F8" }}
+                    {...params}
+                  />
+                )}
+              />
+            </LocalizationProvider>
           </Box>
           <Box className={classes.box}>
             <InputField>Team A</InputField>
@@ -161,9 +195,14 @@ const CricketEventForm = ({ show, close }) => {
             <InputField>Team A players</InputField>
             {values.playersA && values.playersA.length > 0 && (
               <Stack direction="row" spacing={1}>
-                {values.playersA.map((name) => {
+                {values.playersA.map((name, ind) => {
                   return (
-                    <Chip label={name} color="primary" variant="outlined" />
+                    <Chip
+                      label={name}
+                      color="primary"
+                      variant="contained"
+                      key={ind}
+                    />
                   );
                 })}
               </Stack>
@@ -203,11 +242,16 @@ const CricketEventForm = ({ show, close }) => {
           </Box>
           <Box className={classes.box}>
             <InputField>Team B players</InputField>
-            {values.playersA && values.playersA.length > 0 && (
+            {values.playersB && values.playersB.length > 0 && (
               <Stack direction="row" spacing={1}>
-                {values.playersA.map((name) => {
+                {values.playersB.map((name, ind) => {
                   return (
-                    <Chip label={name} color="primary" variant="outlined" />
+                    <Chip
+                      label={name}
+                      color="primary"
+                      variant="contained"
+                      key={ind}
+                    />
                   );
                 })}
               </Stack>
@@ -243,7 +287,11 @@ const CricketEventForm = ({ show, close }) => {
               margin: "auto",
             }}
           >
-            <Button variant="contained" onClick={handleSubmit}>
+            <Button
+              variant="contained"
+              onClick={handleSubmit}
+              //   disabled={checkDisabled}
+            >
               SUBMIT
             </Button>
           </Box>

@@ -340,28 +340,6 @@ const theme = createTheme({
         },
       },
     },
-    MuiStepLabel: {
-      styleOverrides: {
-        label: {
-          color: "rgba(0, 0, 0, 0.6)",
-          "&.Mui-active": {
-            fontSize: "12px",
-            fontWeight: 600,
-            color: "#333333",
-          },
-          "&.Mui-completed": {
-            fontSize: "12px",
-            fontWeight: 600,
-            color: "#333333",
-          },
-        },
-        completed: {
-          fontSize: "12px",
-          fontWeight: 600,
-          color: "#333333",
-        },
-      },
-    },
 
     // MuiMenuItem: {
     // 	// For ListItem, change this to MuiListItem
