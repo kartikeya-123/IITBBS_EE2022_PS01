@@ -71,6 +71,9 @@ const theme = createTheme({
         notchedOutline: {
           borderWidth: "0px",
         },
+        // input: {
+        //   border: "1px solid black",
+        // },
       },
     },
 
@@ -327,19 +330,19 @@ const theme = createTheme({
         },
       },
     },
-    MuiSelect: {
-      styleOverrides: {
-        icon: {
-          color: "black",
-        },
-        select: {
-          "&.selected": {
-            // this is to refer to the prop provided by M-UI
-            backgroundColor: "white", // updated backgroundColor
-          },
-        },
-      },
-    },
+    // MuiSelect: {
+    //   styleOverrides: {
+    //     icon: {
+    //       color: "black",
+    //     },
+    //     select: {
+    //       "&.selected": {
+    //         // this is to refer to the prop provided by M-UI
+    //         backgroundColor: "white", // updated backgroundColor
+    //       },
+    //     },
+    //   },
+    // },
 
     // MuiMenuItem: {
     // 	// For ListItem, change this to MuiListItem

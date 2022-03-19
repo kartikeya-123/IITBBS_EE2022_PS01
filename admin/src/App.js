@@ -3,7 +3,7 @@ import { ThemeProvider } from "@mui/material";
 import theme from "./theme/theme";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import HomeLayout from "./components/Home/Layout";
-import SportsLayout from "./components/Sports/CricketLayout";
+import SportsLayout from "./components/Sports/Layout";
 import CricketPageLayout from "./components/Sports/Pages/Cricket";
 
 function App() {

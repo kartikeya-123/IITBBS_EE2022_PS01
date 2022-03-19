@@ -12,7 +12,7 @@ import {
   Fab,
 } from "@mui/material";
 import getImage from "../../assets/images";
-import db from "../../config/db";
+import db from "./../../config/db";
 import {
   collection,
   doc,
@@ -21,7 +21,6 @@ import {
   onSnapshot,
 } from "firebase/firestore";
 import AddIcon from "@mui/icons-material/Add";
-import CricketEventForm from "../Modals/CricketModal";
 
 const SportsLayout = () => {
   const { sportName } = useParams();
@@ -55,66 +54,63 @@ const SportsLayout = () => {
     await setDoc(doc(cricketRef), data);
   };
 
-  const submitData = async (values) => {
-    let data = values;
-    let data1;
-    data1 = values.playersA.map((player) => {
-      let newFields = {
-        name: player,
-        batting: {
-          score: 0,
-          overs: 0,
-        },
-        bowling: {
-          wickets: 0,
-          overs: 0,
-          score: 0,
-        },
-      };
+  // const submitData = async (values) => {
+  //   let data = values;
+  //   let data1;
+  //   data1 = values.playersA.map((player) => {
+  //     let newFields = {
+  //       name: player,
+  //       batting: {
+  //         score: 0,
+  //         overs: 0,
+  //       },
+  //       bowling: {
+  //         wickets: 0,
+  //         overs: 0,
+  //       },
+  //     };
 
-      return newFields;
-    });
+  //     return newFields;
+  //   });
 
-    let data2;
-    data2 = values.playersB.map((player) => {
-      let newFields = {
-        name: player,
-        batting: {
-          score: 0,
-          overs: 0,
-        },
-        bowling: {
-          wickets: 0,
-          overs: 0,
-          score: 0,
-        },
-      };
-      return newFields;
-    });
+  //   let data2;
+  //   data2 = values.playersB.map((player) => {
+  //     let newFields = {
+  //       name: player,
+  //       batting: {
+  //         score: 0,
+  //         overs: 0,
+  //       },
+  //       bowling: {
+  //         wickets: 0,
+  //         overs: 0,
+  //       },
+  //     };
+  //     return newFields;
+  //   });
 
-    data.playersA = data1;
-    data.playersB = data2;
-    data.innings = 1;
-    data.teamAScore = 0;
-    data.teamBScore = 0;
-    data.batsman1 = 0;
-    data.batsman2 = 1;
-    data.strike = 1;
-    data.firstInningsScore = 0;
-    data.secondInningsScore = 0;
-    data.firstInningsWickets = 0;
-    data.secondInningsWickets = 0;
-    data.firstInningsOvers = 0;
-    data.secondInningsOvers = 0;
-    data.matchFinished = 0;
-    data.currentBowler = 0;
-    // Data
-    console.log(data);
+  //   data.playersA = data1;
+  //   data.playersB = data2;
+  //   data.innings = 1;
+  //   data.teamAScore = 0;
+  //   data.teamBScore = 0;
+  //   data.batsman1 = 0;
+  //   data.batsman2 = 1;
+  //   data.strike = 1;
+  //   data.firstInningsScore = 0;
+  //   data.secondInningsScore = 0;
+  //   data.firstInningsWickets = 0;
+  //   data.secondInningsWickets = 0;
+  //   data.firstInningsOvers = 0;
+  //   data.secondInningsOvers = 0;
 
-    // Firebase post
-    handleClose();
-    await submitToFirebase(data);
-  };
+  //   // Data
+  //   console.log(data);
+
+  //   // Firebase post
+  //   handleClose();
+  //   await submitToFirebase(data);
+  // };
 
   useEffect(() => {
     // console.log(db);
@@ -141,7 +137,7 @@ const SportsLayout = () => {
           >
             FEATURED MATCHES - {sportName}
           </Typography>
-          <Fab
+          {/* <Fab
             color="primary"
             aria-label="add"
             onClick={() => {
@@ -149,20 +145,20 @@ const SportsLayout = () => {
             }}
           >
             <AddIcon />
-          </Fab>
+          </Fab> */}
         </Box>
         <Grid container spacing={2}>
           {events &&
             events.map((event) => <SportEvent event={event} key={event.id} />)}
         </Grid>
       </Paper>
-      {showForm && (
+      {/* {showForm && (
         <CricketEventForm
           show={showForm}
           close={handleClose}
           submit={submitData}
         />
-      )}
+      )} */}
     </Grid>
   );
 };
@@ -178,7 +174,7 @@ const SportEvent = (event) => {
     <Grid item>
       <Card
         sx={{
-          width: "400px",
+          width: "350px",
           height: "150px",
           borderRadius: "0px",
           boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",

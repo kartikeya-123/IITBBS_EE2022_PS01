@@ -8,7 +8,7 @@ import {
   onSnapshot,
   updateDoc,
 } from "firebase/firestore";
-import db from "./../../../config/db";
+import db from "./../../../config/db.js";
 import {
   Card,
   CardContent,
@@ -27,47 +27,7 @@ import {
   FormControlLabel,
   Checkbox,
   Button,
-  FormControl,
-  InputLabel,
-  Select,
-  InputBase,
-  MenuItem,
 } from "@mui/material";
-import { getOverlappingDaysInIntervals } from "date-fns";
-import { styled } from "@mui/material/styles";
-
-const BootstrapInput = styled(InputBase)(({ theme }) => ({
-  "label + &": {
-    marginTop: theme.spacing(1),
-  },
-  "& .MuiInputBase-input": {
-    borderRadius: 4,
-    position: "relative",
-    backgroundColor: theme.palette.background.paper,
-    border: "1px solid #ced4da",
-    fontSize: 16,
-    padding: "10px 26px 10px 12px",
-    transition: theme.transitions.create(["border-color", "box-shadow"]),
-    // Use the system font instead of the default Roboto font.
-    fontFamily: [
-      "-apple-system",
-      "BlinkMacSystemFont",
-      '"Segoe UI"',
-      "Roboto",
-      '"Helvetica Neue"',
-      "Arial",
-      "sans-serif",
-      '"Apple Color Emoji"',
-      '"Segoe UI Emoji"',
-      '"Segoe UI Symbol"',
-    ].join(","),
-    "&:focus": {
-      borderRadius: 4,
-      borderColor: "#80bdff",
-      boxShadow: "0 0 0 0.2rem rgba(0,123,255,.25)",
-    },
-  },
-}));
 
 const CricketPageLayout = () => {
   const { matchId } = useParams();
@@ -76,13 +36,9 @@ const CricketPageLayout = () => {
   const [currTeam, setCurrTeam] = useState(1);
 
   const [currentInnings, setCurrentInnings] = useState([]);
-  const [oppositeInnings, setOppositeInnings] = useState([]);
   const [currentRun, setCurrentRun] = useState(-1);
   const [out, setOut] = useState(-1);
   const runs = [0, 1, 2, 3, 4, 5, 6];
-  const [inningsChange, setInningsChange] = useState(false);
-  const [currentBowler, setCurrentBowler] = useState(0);
-  const [newOver, setNewOver] = useState(false);
 
   const initData = async () => {
     // const cricketRef = collection(db, "Cricket");
@@ -90,18 +46,14 @@ const CricketPageLayout = () => {
     onSnapshot(eventRef, (data) => {
       const eventData = data.data();
       setEvent(eventData);
-      setCurrentBowler(eventData?.currentBowler);
       if (eventData?.innings === 1) {
         setCurrTeam(1);
-        setCurrentInnings(eventData?.playersA);
-        setOppositeInnings(eventData?.playersB);
         setSelectedTeam(eventData?.playersA);
-        // if(eventData.firstInningsOvers === 0)
+        setCurrentInnings(eventData?.playersA);
       } else {
         setCurrTeam(2);
-        setOppositeInnings(eventData?.playersA);
-        setCurrentInnings(eventData?.playersB);
         setSelectedTeam(eventData?.playersB);
+        setCurrentInnings(eventData?.playersB);
       }
       console.log(eventData);
       setOut(-1);
@@ -127,14 +79,14 @@ const CricketPageLayout = () => {
     else setOut(-1);
   };
 
-  const getScore = (innings) => {
-    if (innings === 1)
+  const getScore = () => {
+    if (event?.innings === 1)
       return event?.firstInningsScore + "/" + event?.firstInningsWickets;
     else return event?.secondInningsScore + "/" + event?.secondInningsWickets;
   };
 
-  const getOvers = (innings) => {
-    if (innings === 1) return event?.firstInningsOvers;
+  const getOvers = () => {
+    if (event?.innings === 1) return event?.firstInningsOvers;
     else return event?.secondInningsOvers;
   };
 
@@ -151,10 +103,7 @@ const CricketPageLayout = () => {
     return val;
   };
 
-  const checkNewOver = () => {
-    let over;
-    if (event.innings === 1) over = event.firstInningsOvers;
-    else over = event.secondInningsOvers;
+  const checkNewOver = (over) => {
     return (over * 10) % 10 === 0;
   };
 
@@ -174,135 +123,47 @@ const CricketPageLayout = () => {
   const submitData = async () => {
     let data = event;
     console.log(out);
-    if (!inningsChange) {
-      if (data?.innings === 1) {
-        if (out === -1) {
-          // Not out
-          if (data?.strike === 1) {
-            data.playersA[data?.batsman1].batting.score += currentRun;
-            data.playersA[data?.batsman1].batting.overs++;
-          } else {
-            data.playersA[data?.batsman2].batting.score += currentRun;
-            data.playersA[data?.batsman2].batting.overs++;
-          }
-
-          data.firstInningsOvers = newOvers(data?.firstInningsOvers);
-
-          data.firstInningsScore += currentRun;
-          data.playersB[currentBowler].bowling.score += currentRun;
-
-          if ((currentRun % 2 !== 0) ^ checkNewOver(data?.firstInningsOvers)) {
-            if (data.strike === 1) data.strike = 2;
-            else data.strike = 1;
-          }
-          data.currentBowler = currentBowler;
+    if (data?.innings === 1) {
+      if (out === -1) {
+        // Not out
+        if (data?.strike === 1) {
+          data.playersA[data?.batsman1].batting.score += currentRun;
+          data.playersA[data?.batsman1].batting.overs++;
         } else {
-          const newBatsman = Math.max(data.batsman1, data.batsman2) + 1;
+          data.playersA[data?.batsman2].batting.score += currentRun;
+          data.playersA[data?.batsman2].batting.overs++;
+        }
 
-          if (data?.strike === 1) {
-            data.playersA[data?.batsman1].batting.overs++;
-            data.batsman1 = newBatsman;
-          } else {
-            data.playersA[data.batsman2].batting.overs++;
-            data.batsman2 = newBatsman;
-          }
+        data.firstInningsOvers = newOvers(data?.firstInningsOvers);
 
-          data.firstInningsOvers = newOvers(data?.firstInningsOvers);
-          data.firstInningsWickets++;
-          data.playersB[currentBowler].bowling.wickets++;
-          if ((currentRun % 2 !== 0) ^ checkNewOver(data?.firstInningsOvers)) {
-            if (data.strike === 1) data.strike = 2;
-            else data.strike = 1;
-          }
-          data.currentBowler = currentBowler;
+        data.firstInningsScore += currentRun;
+
+        if ((currentRun % 2 !== 0) ^ checkNewOver(data?.firstInningsOvers)) {
+          if (data.strike === 1) data.strike = 2;
+          else data.strike = 1;
         }
       } else {
-        if (out === -1) {
-          // Not out
-          if (data?.strike === 1) {
-            data.playersB[data?.batsman1].batting.score += currentRun;
-            data.playersB[data?.batsman1].batting.overs++;
-          } else {
-            data.playersB[data?.batsman2].batting.score += currentRun;
-            data.playersB[data?.batsman2].batting.overs++;
-          }
+        const newBatsman = Math.max(data.batsman1, data.batsman2) + 1;
 
-          data.secondInningsOvers = newOvers(data?.secondInningsOvers);
-
-          data.secondInningsScore += currentRun;
-          data.playersA[currentBowler].bowling.score += currentRun;
-          if ((currentRun % 2 !== 0) ^ checkNewOver(data?.secondInningsOvers)) {
-            if (data.strike === 1) data.strike = 2;
-            else data.strike = 1;
-          }
-          data.currentBowler = currentBowler;
+        if (data?.strike === 1) {
+          data.playersA[data?.batsman1].batting.overs++;
+          data.batsman1 = newBatsman;
         } else {
-          const newBatsman = Math.max(data.batsman1, data.batsman2) + 1;
+          data.playersA[data.batsman2].batting.overs++;
+          data.batsman2 = newBatsman;
+        }
 
-          if (data?.strike === 1) {
-            data.playersB[data?.batsman1].batting.overs++;
-            data.batsman1 = newBatsman;
-          } else {
-            data.playersB[data.batsman2].batting.overs++;
-            data.batsman2 = newBatsman;
-          }
+        data.firstInningsOvers = newOvers(data?.firstInningsOvers);
 
-          data.secondInningsOvers = newOvers(data?.secondInningsOvers);
-          data.secondInningsWickets++;
-          data.playersA[currentBowler].bowling.wickets++;
-          if ((currentRun % 2 !== 0) ^ checkNewOver(data?.secondInningsOvers)) {
-            if (data.strike === 1) data.strike = 2;
-            else data.strike = 1;
-          }
-          data.currentBowler = currentBowler;
+        if ((currentRun % 2 !== 0) ^ checkNewOver(data?.firstInningsOvers)) {
+          if (data.strike === 1) data.strike = 2;
+          else data.strike = 1;
         }
       }
     } else {
-      data.innings = 2;
-      data.batsman1 = 0;
-      data.batsman2 = 1;
-      data.strike = 1;
-      data.currentBowler = 0;
     }
     await submitDataToFireStore(data);
   };
-
-  //   const getCurrentBowlerDetails = ()=>{
-  //        let bowler;
-  //        if(event.innings === 1){
-  //            bowler = event.playersB[currentBowler];
-  //        }
-  //        else bowler = event.playersA[currentBowler];
-
-  //        return (
-  //         <Box
-  //         sx={{
-  //           display: "flex",
-  //           justifyContent: "space-between",
-  //           alignItems: "center",
-  //         }}
-  //       >
-  //         <Typography sx={{ fontWeight: 600, fontSize: "18px" }}>
-  //           {" "}
-  //           {currentInnings[event?.batsman1]?.name}
-  //           {event?.strike === 1 ? "*" : ""}
-  //         </Typography>
-  //         <Typography sx={{ fontWeight: 600, fontSize: "18px" }}>
-  //           {" "}
-  //           {currentInnings[event?.batsman1]?.batting?.score}
-  //         </Typography>
-  //         <FormControlLabel
-  //           label="Out"
-  //           control={
-  //             <Checkbox
-  //               checked={out === 1}
-  //               onChange={() => handleOut(1)}
-  //             ></Checkbox>
-  //           }
-  //         />
-  //       </Box>
-  //        )
-  //   }
 
   return (
     <div>
@@ -322,7 +183,6 @@ const CricketPageLayout = () => {
               sx={{
                 width: "100%",
                 minHeight: "600px",
-                // minWidth: "700px",
                 borderRadius: "0px",
                 boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
               }}
@@ -360,6 +220,7 @@ const CricketPageLayout = () => {
                 </Box>
               </Box>
               <CardContent sx={{ padding: "0px 30px 30px 30px" }}>
+                {/* <Typography>Scorecard</Typography> */}
                 <Box
                   sx={{
                     marginBottom: "20px",
@@ -374,7 +235,7 @@ const CricketPageLayout = () => {
                       color: "#17a8b0",
                     }}
                   >
-                    Score : {getScore(currTeam)}
+                    Score : {getScore()}
                   </Typography>
                   <Typography
                     sx={{
@@ -383,7 +244,7 @@ const CricketPageLayout = () => {
                       color: "#17a8b0",
                     }}
                   >
-                    Overs : {getOvers(currTeam)}
+                    Overs : {getOvers()}
                   </Typography>
                 </Box>
                 <Table>
@@ -441,13 +302,7 @@ const CricketPageLayout = () => {
                 </Table>
               </CardContent>
             </Card>
-            <Card
-              sx={{
-                height: "100%",
-                width: "60%",
-                boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
-              }}
-            >
+            <Card sx={{ height: "100%", width: "80%" }}>
               <CardContent>
                 <Typography
                   sx={{
@@ -484,7 +339,7 @@ const CricketPageLayout = () => {
                           color: "#17a8b0",
                         }}
                       >
-                        Score : {getScore(event?.innings)}
+                        Score : {getScore()}
                       </Typography>
                       <Typography
                         sx={{
@@ -493,15 +348,14 @@ const CricketPageLayout = () => {
                           color: "#17a8b0",
                         }}
                       >
-                        Overs : {getOvers(event?.innings)}
+                        Overs : {getOvers()}
                       </Typography>
                     </Box>
-                    <Box
+                    {/* <Box
                       sx={{
-                        display: "flex",
-                        justifyContent: "space-evenly",
+                        justifyContent: "center",
                         alignItems: "center",
-                        margin: "auto",
+                        marginLeft: "30px",
                       }}
                     >
                       <Stack direction="row" spacing={1}>
@@ -522,17 +376,11 @@ const CricketPageLayout = () => {
                             </Avatar>
                           ))}
                       </Stack>
-                    </Box>
-                    <Box sx={{ marginTop: "20px" }}>
-                      <Typography
-                        sx={{
-                          textAlign: "center",
-                          fontWeight: 600,
-                          color: "#1d1f61",
-                        }}
-                      >
-                        Batting
-                      </Typography>
+                    </Box> */}
+                    <Typography sx={{ fontSize: "18px", textAlign: "center" }}>
+                      Batting
+                    </Typography>
+                    <Box sx={{ marginTop: "10px" }}>
                       <Box
                         sx={{
                           display: "flex",
@@ -549,15 +397,19 @@ const CricketPageLayout = () => {
                           {" "}
                           {currentInnings[event?.batsman1]?.batting?.score}
                         </Typography>
-                        <FormControlLabel
+                        <Typography sx={{ fontWeight: 600, fontSize: "18px" }}>
+                          {" "}
+                          {currentInnings[event?.batsman1]?.batting?.overs}
+                        </Typography>
+                        {/* <FormControlLabel
                           label="Out"
                           control={
                             <Checkbox
                               checked={out === 1}
                               onChange={() => handleOut(1)}
                             ></Checkbox>
-                          }
-                        />
+                          } */}
+                        {/* /> */}
                       </Box>
                       <Box
                         sx={{
@@ -575,7 +427,11 @@ const CricketPageLayout = () => {
                           {" "}
                           {currentInnings[event?.batsman2]?.batting?.score}
                         </Typography>
-                        <FormControlLabel
+                        <Typography sx={{ fontWeight: 600, fontSize: "18px" }}>
+                          {" "}
+                          {currentInnings[event?.batsman2]?.batting?.overs}
+                        </Typography>
+                        {/* <FormControlLabel
                           label="Out"
                           control={
                             <Checkbox
@@ -583,100 +439,9 @@ const CricketPageLayout = () => {
                               onChange={() => handleOut(2)}
                             ></Checkbox>
                           }
-                        />
+                        /> */}
                       </Box>
-                      {checkNewOver() ? (
-                        <Box sx={{ marginTop: "20px" }}>
-                          {oppositeInnings && oppositeInnings.length > 0 && (
-                            <FormControl sx={{ m: 1, minWidth: 220 }}>
-                              <InputLabel sx={{ fontSize: "16px" }}>
-                                Select Bowler
-                              </InputLabel>
-                              <Select
-                                labelId="demo-simple-select-helper-label"
-                                id="demo-simple-select-helper"
-                                label="Select Bowler"
-                                value={currentBowler}
-                                onChange={(event) => {
-                                  console.log(event);
-                                  setCurrentBowler(event.target.value);
-                                }}
-                                input={<BootstrapInput />}
-                              >
-                                {oppositeInnings &&
-                                  oppositeInnings.map((player, ind) => {
-                                    // if (ind === currentBowler) return;
-                                    return (
-                                      <MenuItem value={ind}>
-                                        {player.name}
-                                      </MenuItem>
-                                    );
-                                  })}
-                              </Select>
-                            </FormControl>
-                          )}
-                        </Box>
-                      ) : (
-                        <Box sx={{ marginTop: "20px" }}>
-                          <Typography
-                            sx={{
-                              textAlign: "center",
-                              fontWeight: 600,
-                              color: "#1d1f61",
-                            }}
-                          >
-                            Bowling
-                          </Typography>
-                          <Box
-                            sx={{
-                              display: "flex",
-                              justifyContent: "space-between",
-                              alignItems: "center",
-                            }}
-                          >
-                            <Typography
-                              sx={{ fontWeight: 600, fontSize: "18px" }}
-                            >
-                              {" "}
-                              {oppositeInnings[event?.currentBowler]?.name}
-                            </Typography>
-                            <Typography
-                              sx={{ fontWeight: 600, fontSize: "18px" }}
-                            >
-                              {" "}
-                              {
-                                oppositeInnings[event?.currentBowler]?.bowling
-                                  ?.score
-                              }
-                            </Typography>
-                            <Typography
-                              sx={{ fontWeight: 600, fontSize: "18px" }}
-                            >
-                              {" "}
-                              {
-                                oppositeInnings[event?.currentBowler]?.bowling
-                                  ?.wickets
-                              }
-                            </Typography>
-                          </Box>
-                        </Box>
-                      )}
-                      <Box>
-                        {event.innings === 1 && (
-                          <FormControlLabel
-                            label="Innings change"
-                            control={
-                              <Checkbox
-                                checked={inningsChange}
-                                onChange={() =>
-                                  setInningsChange(!inningsChange)
-                                }
-                              ></Checkbox>
-                            }
-                          />
-                        )}
-                      </Box>
-                      <Box
+                      {/* <Box
                         sx={{
                           display: "flex",
                           justifyContent: "space-evenly",
@@ -700,14 +465,12 @@ const CricketPageLayout = () => {
                             },
                             border: "none",
                           }}
-                          disabled={
-                            currentRun === -1 && !inningsChange && out === -1
-                          }
+                          disabled={currentRun === -1}
                           onClick={submitData}
                         >
                           Update
                         </Button>
-                      </Box>
+                      </Box> */}
                     </Box>
                   </div>
                 )}

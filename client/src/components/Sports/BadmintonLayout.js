@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import {
   Grid,
   Box,
@@ -21,7 +21,6 @@ import {
   onSnapshot,
 } from "firebase/firestore";
 import AddIcon from "@mui/icons-material/Add";
-import CricketEventForm from "../Modals/CricketModal";
 
 const SportsLayout = () => {
   const { sportName } = useParams();
@@ -33,9 +32,9 @@ const SportsLayout = () => {
   };
 
   const initData = async () => {
-    const cricketRef = collection(db, "Cricket");
-    // console.log(cricketRef);
-    onSnapshot(cricketRef, (data) => {
+    const badmintonRef = collection(db, "Badminton");
+    // console.log(badmintonRef);
+    onSnapshot(badmintonRef, (data) => {
       const eventDocs = data.docs.map((element) => {
         const event = {
           id: element.id,
@@ -43,7 +42,7 @@ const SportsLayout = () => {
         };
         return event;
       });
-      // console.log(eventDocs);
+      console.log(eventDocs);
       setEvents(eventDocs);
     });
 
@@ -51,8 +50,8 @@ const SportsLayout = () => {
   };
 
   const submitToFirebase = async (data) => {
-    const cricketRef = collection(db, "Cricket");
-    await setDoc(doc(cricketRef), data);
+    const badmintonRef = collection(db, "Badminton");
+    await setDoc(doc(badmintonRef), data);
   };
 
   const submitData = async (values) => {
@@ -68,7 +67,6 @@ const SportsLayout = () => {
         bowling: {
           wickets: 0,
           overs: 0,
-          score: 0,
         },
       };
 
@@ -86,7 +84,6 @@ const SportsLayout = () => {
         bowling: {
           wickets: 0,
           overs: 0,
-          score: 0,
         },
       };
       return newFields;
@@ -94,20 +91,6 @@ const SportsLayout = () => {
 
     data.playersA = data1;
     data.playersB = data2;
-    data.innings = 1;
-    data.teamAScore = 0;
-    data.teamBScore = 0;
-    data.batsman1 = 0;
-    data.batsman2 = 1;
-    data.strike = 1;
-    data.firstInningsScore = 0;
-    data.secondInningsScore = 0;
-    data.firstInningsWickets = 0;
-    data.secondInningsWickets = 0;
-    data.firstInningsOvers = 0;
-    data.secondInningsOvers = 0;
-    data.matchFinished = 0;
-    data.currentBowler = 0;
     // Data
     console.log(data);
 
@@ -141,50 +124,28 @@ const SportsLayout = () => {
           >
             FEATURED MATCHES - {sportName}
           </Typography>
-          <Fab
-            color="primary"
-            aria-label="add"
-            onClick={() => {
-              setShowForm(true);
-            }}
-          >
-            <AddIcon />
-          </Fab>
         </Box>
         <Grid container spacing={2}>
           {events &&
             events.map((event) => <SportEvent event={event} key={event.id} />)}
         </Grid>
       </Paper>
-      {showForm && (
-        <CricketEventForm
-          show={showForm}
-          close={handleClose}
-          submit={submitData}
-        />
-      )}
     </Grid>
   );
 };
 
 const SportEvent = (event) => {
   const date = event?.event?.data?.time.toDate().toDateString();
-  const navigate = useNavigate();
 
-  const handleClick = () => {
-    navigate(`/sport/Cricket/${event?.event?.id}`);
-  };
   return (
     <Grid item>
       <Card
         sx={{
-          width: "400px",
+          width: "350px",
           height: "150px",
           borderRadius: "0px",
           boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
-          cursor: "pointer",
         }}
-        onClick={handleClick}
       >
         <CardContent>
           <Box
@@ -195,7 +156,6 @@ const SportEvent = (event) => {
                 fontSize: "20px",
                 fontWeight: 600,
                 textTransform: "uppercase",
-                color: "#004d2a",
               }}
             >
               {event?.event?.data?.name}
@@ -209,7 +169,7 @@ const SportEvent = (event) => {
           >
             <Typography
               sx={{
-                fontSize: "18px",
+                fontSize: "20px",
                 fontWeight: 600,
                 color: "#142d52",
               }}
