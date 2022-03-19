@@ -174,90 +174,91 @@ const CricketPageLayout = () => {
   const submitData = async () => {
     let data = event;
     console.log(out);
-    if (!inningsChange) {
-      if (data?.innings === 1) {
-        if (out === -1) {
-          // Not out
-          if (data?.strike === 1) {
-            data.playersA[data?.batsman1].batting.score += currentRun;
-            data.playersA[data?.batsman1].batting.overs++;
-          } else {
-            data.playersA[data?.batsman2].batting.score += currentRun;
-            data.playersA[data?.batsman2].batting.overs++;
-          }
 
-          data.firstInningsOvers = newOvers(data?.firstInningsOvers);
-
-          data.firstInningsScore += currentRun;
-          data.playersB[currentBowler].bowling.score += currentRun;
-
-          if ((currentRun % 2 !== 0) ^ checkNewOver(data?.firstInningsOvers)) {
-            if (data.strike === 1) data.strike = 2;
-            else data.strike = 1;
-          }
-          data.currentBowler = currentBowler;
+    if (data?.innings === 1) {
+      if (out === -1) {
+        // Not out
+        if (data?.strike === 1) {
+          data.playersA[data?.batsman1].batting.score += currentRun;
+          data.playersA[data?.batsman1].batting.overs++;
         } else {
-          const newBatsman = Math.max(data.batsman1, data.batsman2) + 1;
-
-          if (data?.strike === 1) {
-            data.playersA[data?.batsman1].batting.overs++;
-            data.batsman1 = newBatsman;
-          } else {
-            data.playersA[data.batsman2].batting.overs++;
-            data.batsman2 = newBatsman;
-          }
-
-          data.firstInningsOvers = newOvers(data?.firstInningsOvers);
-          data.firstInningsWickets++;
-          data.playersB[currentBowler].bowling.wickets++;
-          if ((currentRun % 2 !== 0) ^ checkNewOver(data?.firstInningsOvers)) {
-            if (data.strike === 1) data.strike = 2;
-            else data.strike = 1;
-          }
-          data.currentBowler = currentBowler;
+          data.playersA[data?.batsman2].batting.score += currentRun;
+          data.playersA[data?.batsman2].batting.overs++;
         }
+
+        data.firstInningsOvers = newOvers(data?.firstInningsOvers);
+
+        data.firstInningsScore += currentRun;
+        console.log(data.playersB[currentBowler]);
+        data.playersB[currentBowler].bowling.score += currentRun;
+
+        if ((currentRun % 2 !== 0) ^ checkNewOver(data?.firstInningsOvers)) {
+          if (data.strike === 1) data.strike = 2;
+          else data.strike = 1;
+        }
+        data.currentBowler = currentBowler;
       } else {
-        if (out === -1) {
-          // Not out
-          if (data?.strike === 1) {
-            data.playersB[data?.batsman1].batting.score += currentRun;
-            data.playersB[data?.batsman1].batting.overs++;
-          } else {
-            data.playersB[data?.batsman2].batting.score += currentRun;
-            data.playersB[data?.batsman2].batting.overs++;
-          }
+        const newBatsman = Math.max(data.batsman1, data.batsman2) + 1;
 
-          data.secondInningsOvers = newOvers(data?.secondInningsOvers);
-
-          data.secondInningsScore += currentRun;
-          data.playersA[currentBowler].bowling.score += currentRun;
-          if ((currentRun % 2 !== 0) ^ checkNewOver(data?.secondInningsOvers)) {
-            if (data.strike === 1) data.strike = 2;
-            else data.strike = 1;
-          }
-          data.currentBowler = currentBowler;
+        if (data?.strike === 1) {
+          data.playersA[data?.batsman1].batting.overs++;
+          data.batsman1 = newBatsman;
         } else {
-          const newBatsman = Math.max(data.batsman1, data.batsman2) + 1;
-
-          if (data?.strike === 1) {
-            data.playersB[data?.batsman1].batting.overs++;
-            data.batsman1 = newBatsman;
-          } else {
-            data.playersB[data.batsman2].batting.overs++;
-            data.batsman2 = newBatsman;
-          }
-
-          data.secondInningsOvers = newOvers(data?.secondInningsOvers);
-          data.secondInningsWickets++;
-          data.playersA[currentBowler].bowling.wickets++;
-          if ((currentRun % 2 !== 0) ^ checkNewOver(data?.secondInningsOvers)) {
-            if (data.strike === 1) data.strike = 2;
-            else data.strike = 1;
-          }
-          data.currentBowler = currentBowler;
+          data.playersA[data.batsman2].batting.overs++;
+          data.batsman2 = newBatsman;
         }
+
+        data.firstInningsOvers = newOvers(data?.firstInningsOvers);
+        data.firstInningsWickets++;
+        data.playersB[currentBowler].bowling.wickets++;
+        if ((currentRun % 2 !== 0) ^ checkNewOver(data?.firstInningsOvers)) {
+          if (data.strike === 1) data.strike = 2;
+          else data.strike = 1;
+        }
+        data.currentBowler = currentBowler;
       }
     } else {
+      if (out === -1) {
+        // Not out
+        if (data?.strike === 1) {
+          data.playersB[data?.batsman1].batting.score += currentRun;
+          data.playersB[data?.batsman1].batting.overs++;
+        } else {
+          data.playersB[data?.batsman2].batting.score += currentRun;
+          data.playersB[data?.batsman2].batting.overs++;
+        }
+
+        data.secondInningsOvers = newOvers(data?.secondInningsOvers);
+
+        data.secondInningsScore += currentRun;
+        data.playersA[currentBowler].bowling.score += currentRun;
+        if ((currentRun % 2 !== 0) ^ checkNewOver(data?.secondInningsOvers)) {
+          if (data.strike === 1) data.strike = 2;
+          else data.strike = 1;
+        }
+        data.currentBowler = currentBowler;
+      } else {
+        const newBatsman = Math.max(data.batsman1, data.batsman2) + 1;
+
+        if (data?.strike === 1) {
+          data.playersB[data?.batsman1].batting.overs++;
+          data.batsman1 = newBatsman;
+        } else {
+          data.playersB[data.batsman2].batting.overs++;
+          data.batsman2 = newBatsman;
+        }
+
+        data.secondInningsOvers = newOvers(data?.secondInningsOvers);
+        data.secondInningsWickets++;
+        data.playersA[currentBowler].bowling.wickets++;
+        if ((currentRun % 2 !== 0) ^ checkNewOver(data?.secondInningsOvers)) {
+          if (data.strike === 1) data.strike = 2;
+          else data.strike = 1;
+        }
+        data.currentBowler = currentBowler;
+      }
+    }
+    if (inningsChange) {
       data.innings = 2;
       data.batsman1 = 0;
       data.batsman2 = 1;
@@ -527,8 +528,9 @@ const CricketPageLayout = () => {
                       <Typography
                         sx={{
                           textAlign: "center",
-                          fontWeight: 600,
+
                           color: "#1d1f61",
+                          marginBottom: "15px",
                         }}
                       >
                         Batting
@@ -540,7 +542,13 @@ const CricketPageLayout = () => {
                           alignItems: "center",
                         }}
                       >
-                        <Typography sx={{ fontWeight: 600, fontSize: "18px" }}>
+                        <Typography
+                          sx={{
+                            fontWeight: 600,
+                            fontSize: "18px",
+                            width: "100px",
+                          }}
+                        >
                           {" "}
                           {currentInnings[event?.batsman1]?.name}
                           {event?.strike === 1 ? "*" : ""}
@@ -566,7 +574,13 @@ const CricketPageLayout = () => {
                           alignItems: "center",
                         }}
                       >
-                        <Typography sx={{ fontWeight: 600, fontSize: "18px" }}>
+                        <Typography
+                          sx={{
+                            fontWeight: 600,
+                            fontSize: "18px",
+                            width: "100px",
+                          }}
+                        >
                           {" "}
                           {currentInnings[event?.batsman2]?.name}
                           {event?.strike === 2 ? "*" : ""}
@@ -621,7 +635,7 @@ const CricketPageLayout = () => {
                           <Typography
                             sx={{
                               textAlign: "center",
-                              fontWeight: 600,
+                              marginBottom: "15px",
                               color: "#1d1f61",
                             }}
                           >
@@ -635,7 +649,11 @@ const CricketPageLayout = () => {
                             }}
                           >
                             <Typography
-                              sx={{ fontWeight: 600, fontSize: "18px" }}
+                              sx={{
+                                fontWeight: 600,
+                                fontSize: "18px",
+                                width: "100px",
+                              }}
                             >
                               {" "}
                               {oppositeInnings[event?.currentBowler]?.name}

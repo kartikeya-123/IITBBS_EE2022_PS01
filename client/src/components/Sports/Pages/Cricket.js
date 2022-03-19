@@ -36,6 +36,8 @@ const CricketPageLayout = () => {
   const [currTeam, setCurrTeam] = useState(1);
 
   const [currentInnings, setCurrentInnings] = useState([]);
+  const [oppositeInnings, setOppositeInnings] = useState([]);
+
   const [currentRun, setCurrentRun] = useState(-1);
   const [out, setOut] = useState(-1);
   const runs = [0, 1, 2, 3, 4, 5, 6];
@@ -49,10 +51,12 @@ const CricketPageLayout = () => {
       if (eventData?.innings === 1) {
         setCurrTeam(1);
         setSelectedTeam(eventData?.playersA);
+        setOppositeInnings(eventData?.playersB);
         setCurrentInnings(eventData?.playersA);
       } else {
         setCurrTeam(2);
         setSelectedTeam(eventData?.playersB);
+        setOppositeInnings(eventData?.playersA);
         setCurrentInnings(eventData?.playersB);
       }
       console.log(eventData);
@@ -377,10 +381,16 @@ const CricketPageLayout = () => {
                           ))}
                       </Stack>
                     </Box> */}
-                    <Typography sx={{ fontSize: "18px", textAlign: "center" }}>
-                      Batting
-                    </Typography>
-                    <Box sx={{ marginTop: "10px" }}>
+                    <Box sx={{ marginTop: "20px" }}>
+                      <Typography
+                        sx={{
+                          fontSize: "18px",
+                          textAlign: "center",
+                          marginBottom: "15px",
+                        }}
+                      >
+                        Batting
+                      </Typography>
                       <Box
                         sx={{
                           display: "flex",
@@ -388,7 +398,13 @@ const CricketPageLayout = () => {
                           alignItems: "center",
                         }}
                       >
-                        <Typography sx={{ fontWeight: 600, fontSize: "18px" }}>
+                        <Typography
+                          sx={{
+                            fontWeight: 600,
+                            fontSize: "18px",
+                            width: "100px",
+                          }}
+                        >
                           {" "}
                           {currentInnings[event?.batsman1]?.name}
                           {event?.strike === 1 ? "*" : ""}
@@ -411,6 +427,7 @@ const CricketPageLayout = () => {
                           } */}
                         {/* /> */}
                       </Box>
+                      <br></br>
                       <Box
                         sx={{
                           display: "flex",
@@ -418,7 +435,13 @@ const CricketPageLayout = () => {
                           alignItems: "center",
                         }}
                       >
-                        <Typography sx={{ fontWeight: 600, fontSize: "18px" }}>
+                        <Typography
+                          sx={{
+                            fontWeight: 600,
+                            fontSize: "18px",
+                            width: "100px",
+                          }}
+                        >
                           {" "}
                           {currentInnings[event?.batsman2]?.name}
                           {event?.strike === 2 ? "*" : ""}
@@ -440,6 +463,53 @@ const CricketPageLayout = () => {
                             ></Checkbox>
                           }
                         /> */}
+                      </Box>
+                      <Box sx={{ marginTop: "20px" }}>
+                        <Typography
+                          sx={{
+                            textAlign: "center",
+                            color: "#1d1f61",
+                            marginBottom: "15px",
+                          }}
+                        >
+                          Bowling
+                        </Typography>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Typography
+                            sx={{
+                              fontWeight: 600,
+                              fontSize: "18px",
+                              width: "100px",
+                            }}
+                          >
+                            {" "}
+                            {oppositeInnings[event?.currentBowler]?.name}
+                          </Typography>
+                          <Typography
+                            sx={{ fontWeight: 600, fontSize: "18px" }}
+                          >
+                            {" "}
+                            {
+                              oppositeInnings[event?.currentBowler]?.bowling
+                                ?.score
+                            }
+                          </Typography>
+                          <Typography
+                            sx={{ fontWeight: 600, fontSize: "18px" }}
+                          >
+                            {" "}
+                            {
+                              oppositeInnings[event?.currentBowler]?.bowling
+                                ?.wickets
+                            }
+                          </Typography>
+                        </Box>
                       </Box>
                       {/* <Box
                         sx={{

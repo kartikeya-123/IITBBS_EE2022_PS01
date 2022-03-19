@@ -12,7 +12,7 @@ import {
   Fab,
 } from "@mui/material";
 import getImage from "../../assets/images";
-import db from "../../config/db";
+import db from "./../../config/db.js";
 import {
   collection,
   doc,
