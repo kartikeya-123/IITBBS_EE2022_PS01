@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useRef } from "react";
 import { useParams } from "react-router-dom";
 import {
   collection,
@@ -33,6 +33,7 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+import { async } from "@firebase/util";
 const FootballPageLayout = () => {
   const { matchId } = useParams();
   const [event, setEvent] = useState(null);
@@ -46,6 +47,15 @@ const FootballPageLayout = () => {
   const [sco,setsco]=useState(1)
   const [ss,setss]=useState("")
 const [n,setn]=useState("")
+ const [er,seter]=useState(false)
+ const [m,setm]=useState("start match")
+ const [ti,seti]=useState(90)
+const [err,seterr]=useState(null)
+ const tim=()=>{
+  
+   return `${ti} mins left `
+ }
+ 
   const initData = async () => {
     
    
@@ -87,12 +97,60 @@ const [n,setn]=useState("")
       setSelectedTeam(event.playersA);
     } else setSelectedTeam(event.playersB);
   };
+const win=async()=>{
 
-  const sf=async ()=>{
+  if(a>b){
     
+  setm( `${event.teamA} has won `)
+  var p=[...com,{com:`${event.teamA} has won `,team:event.teamA}]
+
+  await  updateDoc(doc(db,'Football',matchId),{comments:p})
+
+    
+  }else{
+    var p=[...com,{com:`${event.teamB} has won `,team:event.teamB}]
+
+    await  updateDoc(doc(db,'Football',matchId),{comments:p})
+    setm( `${event.teamB} has won`)
+
+  }
+}
+const rt=(s)=>{
+  seti((ti)=> {
+    console.log(ti)
+    if(ti===0){
+      clearInterval(s)
+      
+      win()
+
+
+      return ti
+    }
+  return ti-1})
+ 
+ 
+    
+}
+  const sf=async ()=>{
+    if(m==="start match"){
+      setm('Update')
+      seter(true)
+     const srt = setInterval(async () => {
+    
+         rt(srt)
+         
+      
+        
+        
+      }, 1000);
+   
+      return
+    }
     if(d===null){
       return
     }
+      
+      else if(m==='Update'){
   var p=[...com,{com:ss,team:n}]
  if(d.ind==0){
  await  updateDoc(doc(db,'Football',matchId),{playersA:d.s,comments:p})
@@ -101,10 +159,14 @@ const [n,setn]=useState("")
   await  updateDoc(doc(db,'Football',matchId),{playersB:d.s,comments:p})
 
  }
-
+}
+seter(true)
   }
 
   const sch=(e,ind)=>{
+    var po=new Date();
+    
+     var po=po.toLocaleString('en-US', { hour: 'numeric',minute: 'numeric', hour12: true })
     
      if(ind===0){
     var s=event.playersA.map((x)=>({name:x.name,goals:x.goals}))
@@ -116,8 +178,9 @@ const [n,setn]=useState("")
         
            s[i].goals=parseInt(s[i].goals)+1
            setn(event.teamA.slice(0,2))
-           setss(`${s[i].name} has scored a goal aganist ${event?.teamB}`)
+           setss(po+" "+ `${s[i].name} has scored a goal aganist ${event?.teamB}`)
          setd({s,ind})
+         seter(false)
            break
          }
        }
@@ -130,10 +193,11 @@ const [n,setn]=useState("")
        for (var i=0;i<s.length;i++){
          if(s[i].name===e.target.value){
          
-          setss(`${s[i].name} has scored a goal aganist ${event?.teamA}`)
+          setss(po+" " +`${s[i].name} has scored a goal aganist ${event?.teamA}`)
 
            s[i].goals=parseInt(s[i].goals)+1
            setd({s,ind})
+           seter(false)
       
     
           
@@ -265,7 +329,17 @@ const [n,setn]=useState("")
                     marginBottom: "20px",
                   }}
                 >
-                  SCORE UPDATE
+                  SCORE UPDATE 
+                </Typography>
+                <Typography
+                  sx={{
+                    fontWeight: 400,
+                    textAlign: "center",
+                    fontSize: "14px",
+                    marginBottom: "20px",
+                  }}
+                >
+                  {tim()}
                 </Typography>
                 {1  && (
                   <div style={{ justifyContent: "center" }}>
@@ -340,9 +414,12 @@ const [n,setn]=useState("")
                           alignItems: "center",
                           marginTop: "30px",
                         }}
-                      ><Box>
+                      ><Box >
+                        
+
                         <Button
                          onClick={sf}
+                         disabled={er}
                           sx={{
                             color: "#FFFFFF",
                             backgroundColor: "#D91E98",
@@ -356,11 +433,12 @@ const [n,setn]=useState("")
                               color: "#FFFFFF",
                               backgroundColor: "#b6bfb8",
                             },
+                          
                             border: "none",
                           }}
                           
                         >
-                          Update
+                         {m}
                         </Button>
                       </Box>
                     </Box>
