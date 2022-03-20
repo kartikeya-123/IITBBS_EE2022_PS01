@@ -6,14 +6,9 @@ import {
   setDoc,
   getDoc,
   onSnapshot,
-<<<<<<< HEAD
-} from "firebase/firestore";
-import db from "./../../../config/db";
-=======
   updateDoc,
 } from "firebase/firestore";
 import db from "./../../../config/db.js";
->>>>>>> a611ccc49a2ff010b44a2450c6fe0cb55333458e
 import {
   Card,
   CardContent,
@@ -41,11 +36,8 @@ const CricketPageLayout = () => {
   const [currTeam, setCurrTeam] = useState(1);
 
   const [currentInnings, setCurrentInnings] = useState([]);
-<<<<<<< HEAD
-=======
   const [oppositeInnings, setOppositeInnings] = useState([]);
 
->>>>>>> a611ccc49a2ff010b44a2450c6fe0cb55333458e
   const [currentRun, setCurrentRun] = useState(-1);
   const [out, setOut] = useState(-1);
   const runs = [0, 1, 2, 3, 4, 5, 6];
@@ -53,15 +45,6 @@ const CricketPageLayout = () => {
   const initData = async () => {
     // const cricketRef = collection(db, "Cricket");
     const eventRef = doc(db, "Cricket", matchId);
-<<<<<<< HEAD
-    const eventDoc = await getDoc(eventRef);
-    const data = eventDoc.data();
-    setEvent(data);
-    setSelectedTeam(data?.playersA);
-    if (data?.innings === 1) setCurrentInnings(data?.playersA);
-    else setCurrentInnings(data?.playersB);
-    console.log(eventDoc.data());
-=======
     onSnapshot(eventRef, (data) => {
       const eventData = data.data();
       setEvent(eventData);
@@ -80,7 +63,6 @@ const CricketPageLayout = () => {
       setOut(-1);
       setCurrentRun(-1);
     });
->>>>>>> a611ccc49a2ff010b44a2450c6fe0cb55333458e
   };
 
   useEffect(() => {
@@ -102,12 +84,6 @@ const CricketPageLayout = () => {
   };
 
   const getScore = () => {
-<<<<<<< HEAD
-    if (event?.innings === 1) return event?.firstInningsScore;
-    else return event?.secondInningsScore;
-  };
-
-=======
     if (event?.innings === 1)
       return event?.firstInningsScore + "/" + event?.firstInningsWickets;
     else return event?.secondInningsScore + "/" + event?.secondInningsWickets;
@@ -204,7 +180,6 @@ const CricketPageLayout = () => {
     }
     return message;
   };
->>>>>>> a611ccc49a2ff010b44a2450c6fe0cb55333458e
   return (
     <div>
       {event && (
@@ -221,16 +196,11 @@ const CricketPageLayout = () => {
           >
             <Card
               sx={{
-<<<<<<< HEAD
-                width: "700px",
-                minHeight: "600px",
-=======
                 width: "100%",
                 minWidth: "700px",
                 minHeight: "600px",
                 borderRadius: "0px",
                 boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
->>>>>>> a611ccc49a2ff010b44a2450c6fe0cb55333458e
               }}
             >
               <Box
@@ -246,18 +216,11 @@ const CricketPageLayout = () => {
                   sx={{
                     width: "100%",
                     textAlign: "center",
-<<<<<<< HEAD
-                    backgroundColor: currTeam === 1 ? "#F8F9FA" : "none",
-=======
                     backgroundColor: currTeam === 1 ? "#e6e8f0" : "none",
->>>>>>> a611ccc49a2ff010b44a2450c6fe0cb55333458e
                     padding: "10px",
                   }}
                   onClick={() => handleTeam(1)}
                 >
-<<<<<<< HEAD
-                  <Typography>{event?.teamA}</Typography>
-=======
                   <Typography
                     sx={{
                       fontSize: "17px",
@@ -267,33 +230,16 @@ const CricketPageLayout = () => {
                   >
                     {event?.teamA}
                   </Typography>
->>>>>>> a611ccc49a2ff010b44a2450c6fe0cb55333458e
                 </Box>
                 <Box
                   sx={{
                     width: "100%",
                     textAlign: "center",
-<<<<<<< HEAD
-                    backgroundColor: currTeam === 2 ? "#F8F9FA" : "none",
-=======
                     backgroundColor: currTeam === 2 ? "#e6e8f0" : "none",
->>>>>>> a611ccc49a2ff010b44a2450c6fe0cb55333458e
                     padding: "10px",
                   }}
                   onClick={() => handleTeam(2)}
                 >
-<<<<<<< HEAD
-                  <Typography>{event?.teamB}</Typography>
-                </Box>
-              </Box>
-              <CardContent sx={{ padding: "0px 30px 30px 30px" }}>
-                <Typography>Scorecard</Typography>
-                <Table>
-                  <TableRow>
-                    <TableCell>Batting</TableCell>
-                    <TableCell>Runs scored</TableCell>
-                    <TableCell>Overs faced</TableCell>
-=======
                   <Typography
                     sx={{
                       fontSize: "17px",
@@ -362,17 +308,11 @@ const CricketPageLayout = () => {
                     >
                       Balls faced
                     </TableCell>
->>>>>>> a611ccc49a2ff010b44a2450c6fe0cb55333458e
                   </TableRow>
                   <TableBody>
                     {selectedTeam &&
                       selectedTeam.map((member, ind) => (
                         <TableRow key={ind}>
-<<<<<<< HEAD
-                          <TableCell>{member?.name}</TableCell>
-                          <TableCell>{member?.batting?.score}</TableCell>
-                          <TableCell>{member?.batting?.overs}</TableCell>
-=======
                           <TableCell
                             sx={{ fontSize: "17px", color: "#2e3837" }}
                           >
@@ -388,16 +328,10 @@ const CricketPageLayout = () => {
                           >
                             {member?.batting?.overs}
                           </TableCell>
->>>>>>> a611ccc49a2ff010b44a2450c6fe0cb55333458e
                         </TableRow>
                       ))}
                   </TableBody>
                 </Table>
-<<<<<<< HEAD
-              </CardContent>
-            </Card>
-            <Card sx={{ height: "100%", width: "450px" }}>
-=======
                 {event.status === "Finished" && (
                   <Box
                     sx={{
@@ -423,7 +357,6 @@ const CricketPageLayout = () => {
               </CardContent>
             </Card>
             <Card sx={{ height: "100%", width: "100%", minWidth: "400px" }}>
->>>>>>> a611ccc49a2ff010b44a2450c6fe0cb55333458e
               <CardContent>
                 <Typography
                   sx={{
@@ -451,11 +384,7 @@ const CricketPageLayout = () => {
                           color: "#17a8b0",
                         }}
                       >
-<<<<<<< HEAD
-                        Score : {getScore() + "/" + event?.wickets}
-=======
                         {event?.innings === 1 ? event?.teamA : event?.teamB}
->>>>>>> a611ccc49a2ff010b44a2450c6fe0cb55333458e
                       </Typography>
                       <Typography
                         sx={{
@@ -464,12 +393,6 @@ const CricketPageLayout = () => {
                           color: "#17a8b0",
                         }}
                       >
-<<<<<<< HEAD
-                        Overs : {event?.overs}
-                      </Typography>
-                    </Box>
-                    <Box
-=======
                         Score : {getScore()}
                       </Typography>
                       <Typography
@@ -483,7 +406,6 @@ const CricketPageLayout = () => {
                       </Typography>
                     </Box>
                     {/* <Box
->>>>>>> a611ccc49a2ff010b44a2450c6fe0cb55333458e
                       sx={{
                         justifyContent: "center",
                         alignItems: "center",
@@ -508,10 +430,6 @@ const CricketPageLayout = () => {
                             </Avatar>
                           ))}
                       </Stack>
-<<<<<<< HEAD
-                    </Box>
-                    <Box sx={{ marginTop: "20px" }}>
-=======
                     </Box> */}
                     <Box sx={{ marginTop: "20px" }}>
                       <Typography
@@ -523,7 +441,6 @@ const CricketPageLayout = () => {
                       >
                         Batting
                       </Typography>
->>>>>>> a611ccc49a2ff010b44a2450c6fe0cb55333458e
                       <Box
                         sx={{
                           display: "flex",
@@ -531,9 +448,6 @@ const CricketPageLayout = () => {
                           alignItems: "center",
                         }}
                       >
-<<<<<<< HEAD
-                        <Typography sx={{ fontWeight: 600, fontSize: "18px" }}>
-=======
                         <Typography
                           sx={{
                             fontWeight: 600,
@@ -541,7 +455,6 @@ const CricketPageLayout = () => {
                             width: "100px",
                           }}
                         >
->>>>>>> a611ccc49a2ff010b44a2450c6fe0cb55333458e
                           {" "}
                           {currentInnings[event?.batsman1]?.name}
                           {event?.strike === 1 ? "*" : ""}
@@ -550,31 +463,21 @@ const CricketPageLayout = () => {
                           {" "}
                           {currentInnings[event?.batsman1]?.batting?.score}
                         </Typography>
-<<<<<<< HEAD
-                        <FormControlLabel
-=======
                         <Typography sx={{ fontWeight: 600, fontSize: "18px" }}>
                           {" "}
                           {currentInnings[event?.batsman1]?.batting?.overs}
                         </Typography>
                         {/* <FormControlLabel
->>>>>>> a611ccc49a2ff010b44a2450c6fe0cb55333458e
                           label="Out"
                           control={
                             <Checkbox
                               checked={out === 1}
                               onChange={() => handleOut(1)}
                             ></Checkbox>
-<<<<<<< HEAD
-                          }
-                        />
-                      </Box>
-=======
                           } */}
                         {/* /> */}
                       </Box>
                       <br></br>
->>>>>>> a611ccc49a2ff010b44a2450c6fe0cb55333458e
                       <Box
                         sx={{
                           display: "flex",
@@ -582,9 +485,6 @@ const CricketPageLayout = () => {
                           alignItems: "center",
                         }}
                       >
-<<<<<<< HEAD
-                        <Typography sx={{ fontWeight: 600, fontSize: "18px" }}>
-=======
                         <Typography
                           sx={{
                             fontWeight: 600,
@@ -592,7 +492,6 @@ const CricketPageLayout = () => {
                             width: "100px",
                           }}
                         >
->>>>>>> a611ccc49a2ff010b44a2450c6fe0cb55333458e
                           {" "}
                           {currentInnings[event?.batsman2]?.name}
                           {event?.strike === 2 ? "*" : ""}
@@ -601,15 +500,11 @@ const CricketPageLayout = () => {
                           {" "}
                           {currentInnings[event?.batsman2]?.batting?.score}
                         </Typography>
-<<<<<<< HEAD
-                        <FormControlLabel
-=======
                         <Typography sx={{ fontWeight: 600, fontSize: "18px" }}>
                           {" "}
                           {currentInnings[event?.batsman2]?.batting?.overs}
                         </Typography>
                         {/* <FormControlLabel
->>>>>>> a611ccc49a2ff010b44a2450c6fe0cb55333458e
                           label="Out"
                           control={
                             <Checkbox
@@ -617,11 +512,6 @@ const CricketPageLayout = () => {
                               onChange={() => handleOut(2)}
                             ></Checkbox>
                           }
-<<<<<<< HEAD
-                        />
-                      </Box>
-                      <Box
-=======
                         /> */}
                       </Box>
                       <Box sx={{ marginTop: "20px" }}>
@@ -672,7 +562,6 @@ const CricketPageLayout = () => {
                         </Box>
                       </Box>
                       {/* <Box
->>>>>>> a611ccc49a2ff010b44a2450c6fe0cb55333458e
                         sx={{
                           display: "flex",
                           justifyContent: "space-evenly",
@@ -683,20 +572,12 @@ const CricketPageLayout = () => {
                         <Button
                           sx={{
                             color: "#FFFFFF",
-<<<<<<< HEAD
-                            backgroundColor: "#D91E98",
-=======
                             backgroundColor: "#455187",
->>>>>>> a611ccc49a2ff010b44a2450c6fe0cb55333458e
                             padding: "12px 20px",
                             borderRadius: "24px",
                             "&:hover": {
                               color: "#FFFFFF",
-<<<<<<< HEAD
-                              backgroundColor: "#D91E98",
-=======
                               backgroundColor: "#455187",
->>>>>>> a611ccc49a2ff010b44a2450c6fe0cb55333458e
                             },
                             "&:disabled": {
                               color: "#FFFFFF",
@@ -705,18 +586,11 @@ const CricketPageLayout = () => {
                             border: "none",
                           }}
                           disabled={currentRun === -1}
-<<<<<<< HEAD
-                        >
-                          Update
-                        </Button>
-                      </Box>
-=======
                           onClick={submitData}
                         >
                           Update
                         </Button>
                       </Box> */}
->>>>>>> a611ccc49a2ff010b44a2450c6fe0cb55333458e
                     </Box>
                   </div>
                 )}

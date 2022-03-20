@@ -12,11 +12,7 @@ import {
   Fab,
 } from "@mui/material";
 import getImage from "../../assets/images";
-<<<<<<< HEAD
-import db from "../../config/db";
-=======
 import db from "./../../config/db";
->>>>>>> a611ccc49a2ff010b44a2450c6fe0cb55333458e
 import {
   collection,
   doc,
@@ -24,25 +20,16 @@ import {
   getDoc,
   onSnapshot,
 } from "firebase/firestore";
-<<<<<<< HEAD
-
-=======
 import AddIcon from "@mui/icons-material/Add";
->>>>>>> a611ccc49a2ff010b44a2450c6fe0cb55333458e
 
 const SportsLayout = () => {
   const { sportName } = useParams();
   const [events, setEvents] = useState([]);
-<<<<<<< HEAD
-
-
-=======
   const [showForm, setShowForm] = useState(false);
 
   const handleClose = () => {
     setShowForm(false);
   };
->>>>>>> a611ccc49a2ff010b44a2450c6fe0cb55333458e
 
   const initData = async () => {
     const cricketRef = collection(db, "Cricket");
@@ -67,9 +54,6 @@ const SportsLayout = () => {
     await setDoc(doc(cricketRef), data);
   };
 
-<<<<<<< HEAD
-  
-=======
   // const submitData = async (values) => {
   //   let data = values;
   //   let data1;
@@ -127,7 +111,6 @@ const SportsLayout = () => {
   //   handleClose();
   //   await submitToFirebase(data);
   // };
->>>>>>> a611ccc49a2ff010b44a2450c6fe0cb55333458e
 
   useEffect(() => {
     // console.log(db);
@@ -154,9 +137,6 @@ const SportsLayout = () => {
           >
             FEATURED MATCHES - {sportName}
           </Typography>
-<<<<<<< HEAD
-         
-=======
           {/* <Fab
             color="primary"
             aria-label="add"
@@ -166,16 +146,12 @@ const SportsLayout = () => {
           >
             <AddIcon />
           </Fab> */}
->>>>>>> a611ccc49a2ff010b44a2450c6fe0cb55333458e
         </Box>
         <Grid container spacing={2}>
           {events &&
             events.map((event) => <SportEvent event={event} key={event.id} />)}
         </Grid>
       </Paper>
-<<<<<<< HEAD
-       </Grid>
-=======
       {/* {showForm && (
         <CricketEventForm
           show={showForm}
@@ -184,7 +160,6 @@ const SportsLayout = () => {
         />
       )} */}
     </Grid>
->>>>>>> a611ccc49a2ff010b44a2450c6fe0cb55333458e
   );
 };
 
