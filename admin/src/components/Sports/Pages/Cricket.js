@@ -258,13 +258,29 @@ const CricketPageLayout = () => {
         data.currentBowler = currentBowler;
       }
     }
-    if (inningsChange) {
-      data.innings = 2;
-      data.batsman1 = 0;
-      data.batsman2 = 1;
-      data.strike = 1;
-      data.currentBowler = 0;
+    if (data.innings === 2) {
+      if (
+        data.secondInningsWickets === data.playersA.length - 1 ||
+        data.secondInningsOvers === parseInt(data.overs) ||
+        data.secondInningsScore > data.firstInningsScore
+      ) {
+        data.status = "Finished";
+      }
     }
+    if (data.innings === 1) {
+      if (
+        data.firstInningsWickets === data.playersA.length - 1 ||
+        data.firstInningsOvers === parseInt(data.overs)
+      ) {
+        // Innings change
+        data.innings = 2;
+        data.batsman1 = 0;
+        data.batsman2 = 1;
+        data.strike = 1;
+        data.currentBowler = 0;
+      }
+    }
+
     await submitDataToFireStore(data);
   };
 
@@ -305,6 +321,17 @@ const CricketPageLayout = () => {
   //        )
   //   }
 
+  const getMessage = () => {
+    let message = "";
+    if (event?.status === "Finished") {
+      if (event?.firstInningsScore > event?.secondInningsScore)
+        message = `Match won by ${event?.teamA}`;
+      else if (event?.firstInningsScore > event?.secondInningsScore)
+        message = `Match tied`;
+      else message = `Match won by ${event?.teamB}`;
+    }
+    return message;
+  };
   return (
     <div>
       {event && (
@@ -341,23 +368,39 @@ const CricketPageLayout = () => {
                   sx={{
                     width: "100%",
                     textAlign: "center",
-                    backgroundColor: currTeam === 1 ? "#ebf5f4" : "none",
+                    backgroundColor: currTeam === 1 ? "#e6e8f0" : "none",
                     padding: "10px",
                   }}
                   onClick={() => handleTeam(1)}
                 >
-                  <Typography>{event?.teamA}</Typography>
+                  <Typography
+                    sx={{
+                      fontSize: "17px",
+                      color: currTeam === 1 ? "#0a4a3a" : "inherit",
+                      fontWeight: currTeam === 1 ? 600 : 400,
+                    }}
+                  >
+                    {event?.teamA}
+                  </Typography>
                 </Box>
                 <Box
                   sx={{
                     width: "100%",
                     textAlign: "center",
-                    backgroundColor: currTeam === 2 ? "#ebf5f4" : "none",
+                    backgroundColor: currTeam === 2 ? "#e6e8f0" : "none",
                     padding: "10px",
                   }}
                   onClick={() => handleTeam(2)}
                 >
-                  <Typography>{event?.teamB}</Typography>
+                  <Typography
+                    sx={{
+                      fontSize: "17px",
+                      color: currTeam === 2 ? "#0a4a3a" : "inherit",
+                      fontWeight: currTeam === 2 ? 600 : 400,
+                    }}
+                  >
+                    {event?.teamB}
+                  </Typography>
                 </Box>
               </Box>
               <CardContent sx={{ padding: "0px 30px 30px 30px" }}>
@@ -371,7 +414,7 @@ const CricketPageLayout = () => {
                   <Typography
                     sx={{
                       fontWeight: 600,
-                      fontSize: "15px",
+                      fontSize: "16px",
                       color: "#17a8b0",
                     }}
                   >
@@ -380,7 +423,7 @@ const CricketPageLayout = () => {
                   <Typography
                     sx={{
                       fontWeight: 600,
-                      fontSize: "15px",
+                      fontSize: "16px",
                       color: "#17a8b0",
                     }}
                   >
@@ -535,70 +578,78 @@ const CricketPageLayout = () => {
                       >
                         Batting
                       </Typography>
-                      <Box
-                        sx={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                        }}
-                      >
-                        <Typography
+                      {currentInnings[event?.batsman1] && (
+                        <Box
                           sx={{
-                            fontWeight: 600,
-                            fontSize: "18px",
-                            width: "100px",
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
                           }}
                         >
-                          {" "}
-                          {currentInnings[event?.batsman1]?.name}
-                          {event?.strike === 1 ? "*" : ""}
-                        </Typography>
-                        <Typography sx={{ fontWeight: 600, fontSize: "18px" }}>
-                          {" "}
-                          {currentInnings[event?.batsman1]?.batting?.score}
-                        </Typography>
-                        <FormControlLabel
-                          label="Out"
-                          control={
-                            <Checkbox
-                              checked={out === 1}
-                              onChange={() => handleOut(1)}
-                            ></Checkbox>
-                          }
-                        />
-                      </Box>
-                      <Box
-                        sx={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                        }}
-                      >
-                        <Typography
+                          <Typography
+                            sx={{
+                              fontWeight: 600,
+                              fontSize: "18px",
+                              width: "100px",
+                            }}
+                          >
+                            {" "}
+                            {currentInnings[event?.batsman1]?.name}
+                            {event?.strike === 1 ? "*" : ""}
+                          </Typography>
+                          <Typography
+                            sx={{ fontWeight: 600, fontSize: "18px" }}
+                          >
+                            {" "}
+                            {currentInnings[event?.batsman1]?.batting?.score}
+                          </Typography>
+                          <FormControlLabel
+                            label="Out"
+                            control={
+                              <Checkbox
+                                checked={out === 1}
+                                onChange={() => handleOut(1)}
+                              ></Checkbox>
+                            }
+                          />
+                        </Box>
+                      )}
+                      {currentInnings[event?.batsman2] && (
+                        <Box
                           sx={{
-                            fontWeight: 600,
-                            fontSize: "18px",
-                            width: "100px",
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
                           }}
                         >
-                          {" "}
-                          {currentInnings[event?.batsman2]?.name}
-                          {event?.strike === 2 ? "*" : ""}
-                        </Typography>
-                        <Typography sx={{ fontWeight: 600, fontSize: "18px" }}>
-                          {" "}
-                          {currentInnings[event?.batsman2]?.batting?.score}
-                        </Typography>
-                        <FormControlLabel
-                          label="Out"
-                          control={
-                            <Checkbox
-                              checked={out === 2}
-                              onChange={() => handleOut(2)}
-                            ></Checkbox>
-                          }
-                        />
-                      </Box>
+                          <Typography
+                            sx={{
+                              fontWeight: 600,
+                              fontSize: "18px",
+                              width: "100px",
+                            }}
+                          >
+                            {" "}
+                            {currentInnings[event?.batsman2]?.name}
+                            {event?.strike === 2 ? "*" : ""}
+                          </Typography>
+                          <Typography
+                            sx={{ fontWeight: 600, fontSize: "18px" }}
+                          >
+                            {" "}
+                            {currentInnings[event?.batsman2]?.batting?.score}
+                          </Typography>
+                          <FormControlLabel
+                            label="Out"
+                            control={
+                              <Checkbox
+                                checked={out === 2}
+                                onChange={() => handleOut(2)}
+                              ></Checkbox>
+                            }
+                          />
+                        </Box>
+                      )}
                       {checkNewOver() ? (
                         <Box sx={{ marginTop: "20px" }}>
                           {oppositeInnings && oppositeInnings.length > 0 && (
@@ -679,7 +730,7 @@ const CricketPageLayout = () => {
                           </Box>
                         </Box>
                       )}
-                      <Box>
+                      {/* <Box>
                         {event.innings === 1 && (
                           <FormControlLabel
                             label="Innings change"
@@ -693,39 +744,53 @@ const CricketPageLayout = () => {
                             }
                           />
                         )}
-                      </Box>
-                      <Box
-                        sx={{
-                          display: "flex",
-                          justifyContent: "space-evenly",
-                          alignItems: "center",
-                          marginTop: "30px",
-                        }}
-                      >
-                        <Button
+                      </Box> */}
+                      {event?.status !== "Finished" ? (
+                        <Box
                           sx={{
-                            color: "#FFFFFF",
-                            backgroundColor: "#D91E98",
-                            padding: "12px 20px",
-                            borderRadius: "24px",
-                            "&:hover": {
-                              color: "#FFFFFF",
-                              backgroundColor: "#D91E98",
-                            },
-                            "&:disabled": {
-                              color: "#FFFFFF",
-                              backgroundColor: "#b6bfb8",
-                            },
-                            border: "none",
+                            display: "flex",
+                            justifyContent: "space-evenly",
+                            alignItems: "center",
+                            marginTop: "30px",
                           }}
-                          disabled={
-                            currentRun === -1 && !inningsChange && out === -1
-                          }
-                          onClick={submitData}
                         >
-                          Update
-                        </Button>
-                      </Box>
+                          <Button
+                            sx={{
+                              color: "#FFFFFF",
+                              backgroundColor: "#455187",
+                              padding: "12px 20px",
+                              borderRadius: "24px",
+                              "&:hover": {
+                                color: "#FFFFFF",
+                                backgroundColor: "#455187",
+                              },
+                              "&:disabled": {
+                                color: "#FFFFFF",
+                                backgroundColor: "#b6bfb8",
+                              },
+                              border: "none",
+                            }}
+                            disabled={
+                              currentRun === -1 && !inningsChange && out === -1
+                            }
+                            onClick={submitData}
+                          >
+                            Update
+                          </Button>
+                        </Box>
+                      ) : (
+                        <Typography
+                          sx={{
+                            color: "#007306",
+                            fontSize: "18px",
+                            fontWeight: 600,
+                            textAlign: "center",
+                            marginTop: "15px",
+                          }}
+                        >
+                          {getMessage()}
+                        </Typography>
+                      )}
                     </Box>
                   </div>
                 )}

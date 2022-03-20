@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   Grid,
   Box,
@@ -12,7 +12,7 @@ import {
   Fab,
 } from "@mui/material";
 import getImage from "../../assets/images";
-import db from "./../../config/db.js";
+import db from "../../config/db";
 import {
   collection,
   doc,
@@ -20,16 +20,10 @@ import {
   getDoc,
   onSnapshot,
 } from "firebase/firestore";
-import AddIcon from "@mui/icons-material/Add";
 
 const SportsLayout = () => {
   const { sportName } = useParams();
   const [events, setEvents] = useState([]);
-  const [showForm, setShowForm] = useState(false);
-
-  const handleClose = () => {
-    setShowForm(false);
-  };
 
   const initData = async () => {
     const badmintonRef = collection(db, "Badminton");
@@ -47,56 +41,6 @@ const SportsLayout = () => {
     });
 
     //setDocs
-  };
-
-  const submitToFirebase = async (data) => {
-    const badmintonRef = collection(db, "Badminton");
-    await setDoc(doc(badmintonRef), data);
-  };
-
-  const submitData = async (values) => {
-    let data = values;
-    let data1;
-    data1 = values.playersA.map((player) => {
-      let newFields = {
-        name: player,
-        batting: {
-          score: 0,
-          overs: 0,
-        },
-        bowling: {
-          wickets: 0,
-          overs: 0,
-        },
-      };
-
-      return newFields;
-    });
-
-    let data2;
-    data2 = values.playersB.map((player) => {
-      let newFields = {
-        name: player,
-        batting: {
-          score: 0,
-          overs: 0,
-        },
-        bowling: {
-          wickets: 0,
-          overs: 0,
-        },
-      };
-      return newFields;
-    });
-
-    data.playersA = data1;
-    data.playersB = data2;
-    // Data
-    console.log(data);
-
-    // Firebase post
-    handleClose();
-    await submitToFirebase(data);
   };
 
   useEffect(() => {
@@ -136,16 +80,23 @@ const SportsLayout = () => {
 
 const SportEvent = (event) => {
   const date = event?.event?.data?.time.toDate().toDateString();
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(`/sport/Badminton/${event?.event?.id}`);
+  };
 
   return (
     <Grid item>
       <Card
         sx={{
-          width: "350px",
+          width: "400px",
           height: "150px",
           borderRadius: "0px",
           boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
+          cursor: "pointer",
         }}
+        onClick={handleClick}
       >
         <CardContent>
           <Box

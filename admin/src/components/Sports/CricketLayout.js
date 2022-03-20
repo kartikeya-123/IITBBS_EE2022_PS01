@@ -108,6 +108,7 @@ const SportsLayout = () => {
     data.secondInningsOvers = 0;
     data.matchFinished = 0;
     data.currentBowler = 0;
+    data.status = "Live";
     // Data
     console.log(data);
 

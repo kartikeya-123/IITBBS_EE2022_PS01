@@ -169,6 +169,17 @@ const CricketPageLayout = () => {
     await submitDataToFireStore(data);
   };
 
+  const getMessage = () => {
+    let message = "";
+    if (event?.status === "Finished") {
+      if (event?.firstInningsScore > event?.secondInningsScore)
+        message = `Match won by ${event?.teamA}`;
+      else if (event?.firstInningsScore > event?.secondInningsScore)
+        message = `Match tied`;
+      else message = `Match won by ${event?.teamB}`;
+    }
+    return message;
+  };
   return (
     <div>
       {event && (
@@ -186,6 +197,7 @@ const CricketPageLayout = () => {
             <Card
               sx={{
                 width: "100%",
+                minWidth: "700px",
                 minHeight: "600px",
                 borderRadius: "0px",
                 boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
@@ -204,23 +216,39 @@ const CricketPageLayout = () => {
                   sx={{
                     width: "100%",
                     textAlign: "center",
-                    backgroundColor: currTeam === 1 ? "#ebf5f4" : "none",
+                    backgroundColor: currTeam === 1 ? "#e6e8f0" : "none",
                     padding: "10px",
                   }}
                   onClick={() => handleTeam(1)}
                 >
-                  <Typography>{event?.teamA}</Typography>
+                  <Typography
+                    sx={{
+                      fontSize: "17px",
+                      color: currTeam === 1 ? "#0a4a3a" : "inherit",
+                      fontWeight: currTeam === 1 ? 600 : 400,
+                    }}
+                  >
+                    {event?.teamA}
+                  </Typography>
                 </Box>
                 <Box
                   sx={{
                     width: "100%",
                     textAlign: "center",
-                    backgroundColor: currTeam === 2 ? "#ebf5f4" : "none",
+                    backgroundColor: currTeam === 2 ? "#e6e8f0" : "none",
                     padding: "10px",
                   }}
                   onClick={() => handleTeam(2)}
                 >
-                  <Typography>{event?.teamB}</Typography>
+                  <Typography
+                    sx={{
+                      fontSize: "17px",
+                      color: currTeam === 2 ? "#0a4a3a" : "inherit",
+                      fontWeight: currTeam === 2 ? 600 : 400,
+                    }}
+                  >
+                    {event?.teamB}
+                  </Typography>
                 </Box>
               </Box>
               <CardContent sx={{ padding: "0px 30px 30px 30px" }}>
@@ -235,7 +263,7 @@ const CricketPageLayout = () => {
                   <Typography
                     sx={{
                       fontWeight: 600,
-                      fontSize: "15px",
+                      fontSize: "16px",
                       color: "#17a8b0",
                     }}
                   >
@@ -244,7 +272,7 @@ const CricketPageLayout = () => {
                   <Typography
                     sx={{
                       fontWeight: 600,
-                      fontSize: "15px",
+                      fontSize: "16px",
                       color: "#17a8b0",
                     }}
                   >
@@ -304,9 +332,31 @@ const CricketPageLayout = () => {
                       ))}
                   </TableBody>
                 </Table>
+                {event.status === "Finished" && (
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-evenly",
+                      alignItems: "center",
+                      margin: "auto",
+                    }}
+                  >
+                    <Typography
+                      sx={{
+                        color: "#007306",
+                        fontSize: "18px",
+                        fontWeight: 600,
+                        textAlign: "center",
+                        marginTop: "20px",
+                      }}
+                    >
+                      {getMessage()}
+                    </Typography>
+                  </Box>
+                )}
               </CardContent>
             </Card>
-            <Card sx={{ height: "100%", width: "80%" }}>
+            <Card sx={{ height: "100%", width: "100%", minWidth: "400px" }}>
               <CardContent>
                 <Typography
                   sx={{
@@ -522,12 +572,12 @@ const CricketPageLayout = () => {
                         <Button
                           sx={{
                             color: "#FFFFFF",
-                            backgroundColor: "#D91E98",
+                            backgroundColor: "#455187",
                             padding: "12px 20px",
                             borderRadius: "24px",
                             "&:hover": {
                               color: "#FFFFFF",
-                              backgroundColor: "#D91E98",
+                              backgroundColor: "#455187",
                             },
                             "&:disabled": {
                               color: "#FFFFFF",
