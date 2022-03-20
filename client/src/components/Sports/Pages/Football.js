@@ -29,10 +29,7 @@ import {
   Button,
   Menu,
 } from "@mui/material";
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
+
 const FootballPageLayout = () => {
   const { matchId } = useParams();
   const [event, setEvent] = useState(null);
@@ -40,7 +37,7 @@ const FootballPageLayout = () => {
   const [currTeam, setCurrTeam] = useState(1);
   const [a,setgoala]=useState(0);
   const [b,setgoalb]=useState(0) 
-  const runs=[1,1];
+  const runs=[];
   const [d,setd]=useState(null)
  
 
@@ -52,7 +49,7 @@ const FootballPageLayout = () => {
       console.log(doc.data())
     
 
-    const data = await doc.data();
+    const data =  doc.data();
     
     setEvent(data);
     var a1=0
@@ -65,6 +62,7 @@ const FootballPageLayout = () => {
     }
     setgoala(a1)
     setgoalb(a2)
+    console.log(a1,a2)
     setSelectedTeam(data?.playersA);
   })
   
@@ -73,6 +71,7 @@ const FootballPageLayout = () => {
   useEffect(() => {
      
     initData();
+    
   }, []);
 
   const handleTeam = (team) => {
@@ -80,60 +79,12 @@ const FootballPageLayout = () => {
     if (team === 1) {
       setSelectedTeam(event.playersA);
     } else setSelectedTeam(event.playersB);
+
   };
 
-  const sf=async ()=>{
-    
-    if(d===null){
-      return
-    }
+  
 
- if(d.ind==0){
- await  updateDoc(doc(db,'Football',matchId),{playersA:d.s})
- }
- else{
-  await  updateDoc(doc(db,'Football',matchId),{playersB:d.s})
-
- }
-
-  }
-
-  const sch=(e,ind)=>{
-    
-     if(ind===0){
-    var s=event.playersA.map((x)=>({name:x.name,goals:x.goals}))
-
-    
-
-       for (var i=0;i<s.length;i++){
-         if(s[i].name===e.target.value){
-        
-           s[i].goals=parseInt(s[i].goals)+1
-         setd({s,ind})
-           break
-         }
-       }
-
-
-     }else{
-      var s=event.playersB.map((x)=>({name:x.name,goals:x.goals}))
-
-      
-       for (var i=0;i<s.length;i++){
-         if(s[i].name===e.target.value){
-         
-        
-           s[i].goals=parseInt(s[i].goals)+1
-           setd({s,ind})
-      
-    
-          
-           break
-         }
-       }
-     }
-   
-  }
+  
   return (
     <div>
       {event && (
@@ -203,123 +154,16 @@ const FootballPageLayout = () => {
               
                         </TableRow>
                       ))}
+                      <TableRow key="33">
+                          <TableCell>Total goals</TableCell>
+                          <TableCell>{currTeam===1?a:b}</TableCell>
+              
+                        </TableRow>
                   </TableBody>
                 </Table>
               </CardContent>
             </Card>
-            <Card sx={{ height: "100%", width: "450px" }}>
-              <CardContent>
-                <Typography
-                  sx={{
-                    fontWeight: 600,
-                    textAlign: "center",
-                    fontSize: "20px",
-                    marginBottom: "20px",
-                  }}
-                >
-                  SCORE UPDATE
-                </Typography>
-                {1  && (
-                  <div style={{ justifyContent: "center" }}>
-                    <Box
-                      sx={{
-                        marginBottom: "20px",
-                        display: "flex",
-                        justifyContent: "space-between",
-                      }}
-                    >
-                      <Typography
-                        sx={{
-                          fontWeight: 600,
-                          fontSize: "18px",
-                          color: "#17a8b0",
-                        }}
-                      >
-                        {event?.teamA} : {a}
-                      </Typography>
-                      <Typography
-                        sx={{
-                          fontWeight: 600,
-                          fontSize: "18px",
-                          color: "#17a8b0",
-                        }}
-                      >
-                         {event?.teamB} : {b}
-                      </Typography>
-                    </Box>
-                    <Box
-                      sx={{
-                        justifyContent: "center",
-                        alignItems: "center",
-                        marginLeft: "30px",
-                      }}
-                    >
-                      <Stack direction="row" spacing={35}>
-                        {runs &&
-                          runs.map((run, ind) => (
-                            <Avatar
-                              key={ind}
-                              sx={{
-                                cursor: "pointer",
-                                backgroundColor: "#007a1b" ,
-                              }}
-                              
-                            >
-                              
-                              <Box sx={{ minWidth: 120 }}>
-      <FormControl fullWidth>
-        <InputLabel id="demo-simple-select-label">Goal scored</InputLabel>
-        <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          value={""}
-          label="goals"
-          onChange={(e)=>{sch(e,ind)}}
-         
-        >
-          {ind===0?event.playersA.map((x)=><MenuItem value={x.name}>{x.name}</MenuItem>) : event.playersB.map((x)=><MenuItem value={x.name}>{x.name}</MenuItem>) }
-        </Select>
-      </FormControl>
-    </Box>
-                            </Avatar>
-                          ))}
-                      </Stack>
-                    </Box>
-                    <Box
-                        sx={{
-                          display: "flex",
-                          justifyContent: "space-evenly",
-                          alignItems: "center",
-                          marginTop: "30px",
-                        }}
-                      ><Box>
-                        <Button
-                         onClick={sf}
-                          sx={{
-                            color: "#FFFFFF",
-                            backgroundColor: "#D91E98",
-                            padding: "12px 20px",
-                            borderRadius: "24px",
-                            "&:hover": {
-                              color: "#FFFFFF",
-                              backgroundColor: "#D91E98",
-                            },
-                            "&:disabled": {
-                              color: "#FFFFFF",
-                              backgroundColor: "#b6bfb8",
-                            },
-                            border: "none",
-                          }}
-                          
-                        >
-                          Update
-                        </Button>
-                      </Box>
-                    </Box>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+           
           </Container>
         </Grid>
       )}

@@ -12,7 +12,11 @@ import {
   Fab,
 } from "@mui/material";
 import getImage from "../../assets/images";
+<<<<<<< HEAD
 import db from "../../config/db";
+=======
+import db from "./../../config/db";
+>>>>>>> a611ccc49a2ff010b44a2450c6fe0cb55333458e
 import {
   collection,
   doc,
@@ -20,13 +24,25 @@ import {
   getDoc,
   onSnapshot,
 } from "firebase/firestore";
+<<<<<<< HEAD
 
+=======
+import AddIcon from "@mui/icons-material/Add";
+>>>>>>> a611ccc49a2ff010b44a2450c6fe0cb55333458e
 
 const SportsLayout = () => {
   const { sportName } = useParams();
   const [events, setEvents] = useState([]);
+<<<<<<< HEAD
 
 
+=======
+  const [showForm, setShowForm] = useState(false);
+
+  const handleClose = () => {
+    setShowForm(false);
+  };
+>>>>>>> a611ccc49a2ff010b44a2450c6fe0cb55333458e
 
   const initData = async () => {
     const cricketRef = collection(db, "Cricket");
@@ -51,7 +67,67 @@ const SportsLayout = () => {
     await setDoc(doc(cricketRef), data);
   };
 
+<<<<<<< HEAD
   
+=======
+  // const submitData = async (values) => {
+  //   let data = values;
+  //   let data1;
+  //   data1 = values.playersA.map((player) => {
+  //     let newFields = {
+  //       name: player,
+  //       batting: {
+  //         score: 0,
+  //         overs: 0,
+  //       },
+  //       bowling: {
+  //         wickets: 0,
+  //         overs: 0,
+  //       },
+  //     };
+
+  //     return newFields;
+  //   });
+
+  //   let data2;
+  //   data2 = values.playersB.map((player) => {
+  //     let newFields = {
+  //       name: player,
+  //       batting: {
+  //         score: 0,
+  //         overs: 0,
+  //       },
+  //       bowling: {
+  //         wickets: 0,
+  //         overs: 0,
+  //       },
+  //     };
+  //     return newFields;
+  //   });
+
+  //   data.playersA = data1;
+  //   data.playersB = data2;
+  //   data.innings = 1;
+  //   data.teamAScore = 0;
+  //   data.teamBScore = 0;
+  //   data.batsman1 = 0;
+  //   data.batsman2 = 1;
+  //   data.strike = 1;
+  //   data.firstInningsScore = 0;
+  //   data.secondInningsScore = 0;
+  //   data.firstInningsWickets = 0;
+  //   data.secondInningsWickets = 0;
+  //   data.firstInningsOvers = 0;
+  //   data.secondInningsOvers = 0;
+
+  //   // Data
+  //   console.log(data);
+
+  //   // Firebase post
+  //   handleClose();
+  //   await submitToFirebase(data);
+  // };
+>>>>>>> a611ccc49a2ff010b44a2450c6fe0cb55333458e
 
   useEffect(() => {
     // console.log(db);
@@ -78,14 +154,37 @@ const SportsLayout = () => {
           >
             FEATURED MATCHES - {sportName}
           </Typography>
+<<<<<<< HEAD
          
+=======
+          {/* <Fab
+            color="primary"
+            aria-label="add"
+            onClick={() => {
+              setShowForm(true);
+            }}
+          >
+            <AddIcon />
+          </Fab> */}
+>>>>>>> a611ccc49a2ff010b44a2450c6fe0cb55333458e
         </Box>
         <Grid container spacing={2}>
           {events &&
             events.map((event) => <SportEvent event={event} key={event.id} />)}
         </Grid>
       </Paper>
+<<<<<<< HEAD
        </Grid>
+=======
+      {/* {showForm && (
+        <CricketEventForm
+          show={showForm}
+          close={handleClose}
+          submit={submitData}
+        />
+      )} */}
+    </Grid>
+>>>>>>> a611ccc49a2ff010b44a2450c6fe0cb55333458e
   );
 };
 

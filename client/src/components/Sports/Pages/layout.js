@@ -1,18 +1,14 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import CricketPageLayout from "./Cricket";
-import FootballPageLayout from "./Football";
-
+import CricketLayout from "./Cricket";
+import BadmintonLayout from "./Badminton";
 const Layout = () => {
-  const { sportName ,matchId} = useParams();
-  
+  const { sportName } = useParams();
 
   return (
     <div>
-      {sportName === "Cricket" && <CricketPageLayout/>}
-      {sportName === "Badminton" && <CricketPageLayout/>}
-      {sportName === "Football" &&  <FootballPageLayout/>}
-
+      {sportName === "Cricket" && <CricketLayout />}
+      {sportName === "Badminton" && <BadmintonLayout />}
       {/* {sportName === "Cricket" && <CricketLayout />} */}
     </div>
   );

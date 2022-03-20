@@ -486,7 +486,7 @@ const theme = createTheme({
       },
       maxWidthLg: {
         "@media (min-width: 992px)": {
-          maxWidth: "960px",
+          maxWidth: "1060px",
         },
       },
       maxWidthXl: {

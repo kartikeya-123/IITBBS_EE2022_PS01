@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from "react";
+<<<<<<< HEAD
 import { useParams } from "react-router-dom";
+=======
+import { useParams, useNavigate } from "react-router-dom";
+>>>>>>> a611ccc49a2ff010b44a2450c6fe0cb55333458e
 import {
   Grid,
   Box,
@@ -20,17 +24,23 @@ import {
   getDoc,
   onSnapshot,
 } from "firebase/firestore";
+<<<<<<< HEAD
 import AddIcon from "@mui/icons-material/Add";
 import CricketEventForm from "../Modals/CricketModal";
+=======
+>>>>>>> a611ccc49a2ff010b44a2450c6fe0cb55333458e
 
 const SportsLayout = () => {
   const { sportName } = useParams();
   const [events, setEvents] = useState([]);
+<<<<<<< HEAD
   const [showForm, setShowForm] = useState(false);
 
   const handleClose = () => {
     setShowForm(false);
   };
+=======
+>>>>>>> a611ccc49a2ff010b44a2450c6fe0cb55333458e
 
   const initData = async () => {
     const badmintonRef = collection(db, "Badminton");
@@ -50,6 +60,7 @@ const SportsLayout = () => {
     //setDocs
   };
 
+<<<<<<< HEAD
   const submitToFirebase = async (data) => {
     const badmintonRef = collection(db, "Badminton");
     await setDoc(doc(badmintonRef), data);
@@ -100,6 +111,8 @@ const SportsLayout = () => {
     await submitToFirebase(data);
   };
 
+=======
+>>>>>>> a611ccc49a2ff010b44a2450c6fe0cb55333458e
   useEffect(() => {
     // console.log(db);
     initData();
@@ -125,6 +138,7 @@ const SportsLayout = () => {
           >
             FEATURED MATCHES - {sportName}
           </Typography>
+<<<<<<< HEAD
           <Fab
             color="primary"
             aria-label="add"
@@ -134,12 +148,15 @@ const SportsLayout = () => {
           >
             <AddIcon />
           </Fab>
+=======
+>>>>>>> a611ccc49a2ff010b44a2450c6fe0cb55333458e
         </Box>
         <Grid container spacing={2}>
           {events &&
             events.map((event) => <SportEvent event={event} key={event.id} />)}
         </Grid>
       </Paper>
+<<<<<<< HEAD
       {showForm && (
         <CricketEventForm
           show={showForm}
@@ -147,22 +164,42 @@ const SportsLayout = () => {
           submit={submitData}
         />
       )}
+=======
+>>>>>>> a611ccc49a2ff010b44a2450c6fe0cb55333458e
     </Grid>
   );
 };
 
 const SportEvent = (event) => {
   const date = event?.event?.data?.time.toDate().toDateString();
+<<<<<<< HEAD
+=======
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(`/sport/Badminton/${event?.event?.id}`);
+  };
+>>>>>>> a611ccc49a2ff010b44a2450c6fe0cb55333458e
 
   return (
     <Grid item>
       <Card
         sx={{
+<<<<<<< HEAD
           width: "350px",
           height: "150px",
           borderRadius: "0px",
           boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
         }}
+=======
+          width: "400px",
+          height: "150px",
+          borderRadius: "0px",
+          boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
+          cursor: "pointer",
+        }}
+        onClick={handleClick}
+>>>>>>> a611ccc49a2ff010b44a2450c6fe0cb55333458e
       >
         <CardContent>
           <Box

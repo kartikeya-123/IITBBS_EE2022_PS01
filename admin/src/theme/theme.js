@@ -27,7 +27,7 @@ const theme = createTheme({
           backgroundClip: "initial",
           border: "0",
           borderRadius: ".375rem",
-          overflow: "unset",
+          overflowY: "auto",
         },
       },
     },
@@ -41,9 +41,12 @@ const theme = createTheme({
     },
     MuiDialog: {
       styleOverrides: {
+        root: {
+          overflow: "auto",
+        },
         paper: {
           maxWidth: "900px",
-          maxHeight: "900px",
+          maxHeight: "700px",
           borderRadius: "0px",
           boxShadow: "0px 11px 15px 0px #00000033",
         },
@@ -71,6 +74,9 @@ const theme = createTheme({
         notchedOutline: {
           borderWidth: "0px",
         },
+        // input: {
+        //   border: "1px solid black",
+        // },
       },
     },
 
@@ -327,19 +333,19 @@ const theme = createTheme({
         },
       },
     },
-    MuiSelect: {
-      styleOverrides: {
-        icon: {
-          color: "black",
-        },
-        select: {
-          "&.selected": {
-            // this is to refer to the prop provided by M-UI
-            backgroundColor: "white", // updated backgroundColor
-          },
-        },
-      },
-    },
+    // MuiSelect: {
+    //   styleOverrides: {
+    //     icon: {
+    //       color: "black",
+    //     },
+    //     select: {
+    //       "&.selected": {
+    //         // this is to refer to the prop provided by M-UI
+    //         backgroundColor: "white", // updated backgroundColor
+    //       },
+    //     },
+    //   },
+    // },
 
     // MuiMenuItem: {
     // 	// For ListItem, change this to MuiListItem

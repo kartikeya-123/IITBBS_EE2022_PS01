@@ -68,6 +68,7 @@ const SportsLayout = () => {
         bowling: {
           wickets: 0,
           overs: 0,
+          score: 0,
         },
       };
 
@@ -85,6 +86,7 @@ const SportsLayout = () => {
         bowling: {
           wickets: 0,
           overs: 0,
+          score: 0,
         },
       };
       return newFields;
@@ -97,10 +99,16 @@ const SportsLayout = () => {
     data.teamBScore = 0;
     data.batsman1 = 0;
     data.batsman2 = 1;
-    data.wickets = 0;
     data.strike = 1;
     data.firstInningsScore = 0;
     data.secondInningsScore = 0;
+    data.firstInningsWickets = 0;
+    data.secondInningsWickets = 0;
+    data.firstInningsOvers = 0;
+    data.secondInningsOvers = 0;
+    data.matchFinished = 0;
+    data.currentBowler = 0;
+    data.status = "Live";
     // Data
     console.log(data);
 
@@ -171,7 +179,7 @@ const SportEvent = (event) => {
     <Grid item>
       <Card
         sx={{
-          width: "350px",
+          width: "400px",
           height: "150px",
           borderRadius: "0px",
           boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
