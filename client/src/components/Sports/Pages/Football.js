@@ -39,7 +39,10 @@ const FootballPageLayout = () => {
   const [b,setgoalb]=useState(0) 
   const runs=[];
   const [d,setd]=useState(null)
- 
+  const [com,setcom]=useState([])
+  const [sco,setsco]=useState(1)
+  const [ss,setss]=useState("")
+const [n,setn]=useState("")
 
   const initData = async () => {
     
@@ -52,6 +55,10 @@ const FootballPageLayout = () => {
     const data =  doc.data();
     
     setEvent(data);
+    if(data.comments){
+      setcom(data.comments)
+      console.log(data.comments)
+      }
     var a1=0
     var a2=0
     for (var i=0;i<data.playersA.length;i++){
@@ -105,7 +112,36 @@ const FootballPageLayout = () => {
                 minHeight: "600px",
               }}
             >
+               <Box sx={{display:"flex",flexDirection:"row"}}>
               <Box
+                  sx={{
+                    width: "50%",
+                    textAlign: "center",
+                     backgroundColor:sco===1?"#F8F9FA": "none",
+                    cursor:"pointer",
+                    padding: "10px",
+                  }}
+                  onClick={()=>{setsco(1)}}
+                 
+                >
+                  <Typography>Scorecard</Typography>
+               </Box>
+               <Box
+                  sx={{
+                    width: "50%",
+                    textAlign: "center",
+                    padding: "10px",
+                    backgroundColor: sco===1 ? "none": "#F8F9FA",
+                    cursor:"pointer"
+
+                  }}
+                onClick={()=>{setsco(2)}}
+                >
+                  <Typography>commentary</Typography>
+                </Box>
+                </Box>
+
+              {sco===1&&<Box
                 sx={{
                   width: "100%",
                   display: "flex",
@@ -114,7 +150,7 @@ const FootballPageLayout = () => {
                   marginBottom: "20px",
                 }}
               >
-                <Box
+              <Box
                   sx={{
                     width: "100%",
                     textAlign: "center",
@@ -136,8 +172,15 @@ const FootballPageLayout = () => {
                 >
                   <Typography>{event?.teamB}</Typography>
                 </Box>
-              </Box>
-              <CardContent sx={{ padding: "0px 30px 30px 30px" }}>
+              </Box>}
+              {(sco==2 &&com.length>0)&& <Box sx={{display:"flex",top:"50px",flexDirection:"column",position:"relative",padding:"10px",gap:"1rem"}}>
+                      {com.map(({com,team})=><Box sx={{marginLeft:"20px",padding:"4px",color:"GrayText",display:"flex",flexDirection:"row",alignItems:"center",gap:"1rem"}}>
+                        <Avatar sx={{ background:team===event.teamA?"#008080":"#228B22",fontSize:"15px"	}}>{team}</Avatar>{com}...</Box>)}
+
+                    </Box>
+
+              }
+           { sco===1&&<CardContent sx={{ padding: "0px 30px 30px 30px" }}>
                 <Typography>Scorecard</Typography>
                 <Table>
                   <TableRow>
@@ -162,6 +205,7 @@ const FootballPageLayout = () => {
                   </TableBody>
                 </Table>
               </CardContent>
+}
             </Card>
            
           </Container>

@@ -42,19 +42,25 @@ const FootballPageLayout = () => {
   const [b,setgoalb]=useState(0) 
   const runs=[1,1];
   const [d,setd]=useState(null)
- 
-
+  const [com,setcom]=useState([])
+  const [sco,setsco]=useState(1)
+  const [ss,setss]=useState("")
+const [n,setn]=useState("")
   const initData = async () => {
     
    
       onSnapshot(doc(db, "Football",matchId),async (doc)=>{
       
-      console.log(doc.data())
+      
     
 
     const data = await doc.data();
     
     setEvent(data);
+    if(data.comments){
+    setcom(data.comments)
+    console.log(data.comments)
+    }
     var a1=0
     var a2=0
     for (var i=0;i<data.playersA.length;i++){
@@ -87,12 +93,12 @@ const FootballPageLayout = () => {
     if(d===null){
       return
     }
-
+  var p=[...com,{com:ss,team:n}]
  if(d.ind==0){
- await  updateDoc(doc(db,'Football',matchId),{playersA:d.s})
+ await  updateDoc(doc(db,'Football',matchId),{playersA:d.s,comments:p})
  }
  else{
-  await  updateDoc(doc(db,'Football',matchId),{playersB:d.s})
+  await  updateDoc(doc(db,'Football',matchId),{playersB:d.s,comments:p})
 
  }
 
@@ -109,6 +115,8 @@ const FootballPageLayout = () => {
          if(s[i].name===e.target.value){
         
            s[i].goals=parseInt(s[i].goals)+1
+           setn(event.teamA.slice(0,2))
+           setss(`${s[i].name} has scored a goal aganist ${event?.teamB}`)
          setd({s,ind})
            break
          }
@@ -118,11 +126,12 @@ const FootballPageLayout = () => {
      }else{
       var s=event.playersB.map((x)=>({name:x.name,goals:x.goals}))
 
-      
+      setn(event.teamB.slice(0,2))
        for (var i=0;i<s.length;i++){
          if(s[i].name===e.target.value){
          
-        
+          setss(`${s[i].name} has scored a goal aganist ${event?.teamA}`)
+
            s[i].goals=parseInt(s[i].goals)+1
            setd({s,ind})
       
@@ -136,7 +145,8 @@ const FootballPageLayout = () => {
   }
   return (
     <div>
-      {event && (
+
+    {event && (
         <Grid>
           <Container
             sx={{
@@ -153,8 +163,36 @@ const FootballPageLayout = () => {
                 width: "700px",
                 minHeight: "600px",
               }}
-            >
+              >
+                <Box sx={{display:"flex",flexDirection:"row"}}>
               <Box
+                  sx={{
+                    width: "50%",
+                    textAlign: "center",
+                     backgroundColor:sco===1?"#F8F9FA": "none",
+                    cursor:"pointer",
+                    padding: "10px",
+                  }}
+                  onClick={()=>{setsco(1)}}
+                 
+                >
+                  <Typography>Scorecard</Typography>
+               </Box>
+               <Box
+                  sx={{
+                    width: "50%",
+                    textAlign: "center",
+                    padding: "10px",
+                    backgroundColor: sco===1 ? "none": "#F8F9FA",
+                    cursor:"pointer"
+
+                  }}
+                onClick={()=>{setsco(2)}}
+                >
+                  <Typography>commentary</Typography>
+                </Box>
+                </Box>
+              {sco===1&&<Box
                 sx={{
                   width: "100%",
                   display: "flex",
@@ -163,6 +201,7 @@ const FootballPageLayout = () => {
                   marginBottom: "20px",
                 }}
               >
+                
                 <Box
                   sx={{
                     width: "100%",
@@ -185,9 +224,17 @@ const FootballPageLayout = () => {
                 >
                   <Typography>{event?.teamB}</Typography>
                 </Box>
-              </Box>
-              <CardContent sx={{ padding: "0px 30px 30px 30px" }}>
-                <Typography>Scorecard</Typography>
+                </Box>}
+                 
+              {(sco==2 &&com.length>0)&& <Box sx={{display:"flex",top:"50px",flexDirection:"column",position:"relative",padding:"10px",gap:"1rem"}}>
+                      {com.map(({com,team})=><Box sx={{marginLeft:"20px",padding:"4px",color:"GrayText",display:"flex",flexDirection:"row",alignItems:"center",gap:"1rem"}}>
+                        <Avatar sx={{ background:team===event.teamA?"#008080":"#228B22",fontSize:"15px"	}}>{team}</Avatar>{com}...</Box>)}
+
+                    </Box>
+
+              }
+             { sco===1&&<CardContent sx={{ padding: "0px 30px 30px 30px" }}>
+                
                 <Table>
                   <TableRow>
                     <TableCell>PLayers</TableCell>
@@ -205,8 +252,9 @@ const FootballPageLayout = () => {
                       ))}
                   </TableBody>
                 </Table>
-              </CardContent>
+              </CardContent>}
             </Card>
+                      
             <Card sx={{ height: "100%", width: "450px" }}>
               <CardContent>
                 <Typography
@@ -323,6 +371,7 @@ const FootballPageLayout = () => {
           </Container>
         </Grid>
       )}
+      
     </div>
   );
 };
