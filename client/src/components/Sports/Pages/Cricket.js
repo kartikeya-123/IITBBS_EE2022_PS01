@@ -27,6 +27,10 @@ import {
   FormControlLabel,
   Checkbox,
   Button,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
 } from "@mui/material";
 
 const CricketPageLayout = () => {
@@ -41,6 +45,8 @@ const CricketPageLayout = () => {
   const [currentRun, setCurrentRun] = useState(-1);
   const [out, setOut] = useState(-1);
   const runs = [0, 1, 2, 3, 4, 5, 6];
+  const [showScorecard, setShowScorecard] = useState(true);
+  const [summary, setSummary] = useState(null);
 
   const initData = async () => {
     // const cricketRef = collection(db, "Cricket");
@@ -48,6 +54,7 @@ const CricketPageLayout = () => {
     onSnapshot(eventRef, (data) => {
       const eventData = data.data();
       setEvent(eventData);
+      setSummary(eventData.summary);
       if (eventData?.innings === 1) {
         setCurrTeam(1);
         setSelectedTeam(eventData?.playersA);
@@ -180,6 +187,16 @@ const CricketPageLayout = () => {
     }
     return message;
   };
+
+  const getComment = (comment) => {
+    let add = "";
+    if (comment?.text === "W") add = "Wicket";
+    else add = `${comment.text} run`;
+
+    let message = `${comment.bowler} bowling to ${comment.batsman}, ${add} `;
+    return message;
+  };
+
   return (
     <div>
       {event && (
@@ -216,145 +233,214 @@ const CricketPageLayout = () => {
                   sx={{
                     width: "100%",
                     textAlign: "center",
-                    backgroundColor: currTeam === 1 ? "#e6e8f0" : "none",
                     padding: "10px",
                   }}
-                  onClick={() => handleTeam(1)}
+                  onClick={() => setShowScorecard(true)}
                 >
                   <Typography
                     sx={{
                       fontSize: "17px",
-                      color: currTeam === 1 ? "#0a4a3a" : "inherit",
-                      fontWeight: currTeam === 1 ? 600 : 400,
+                      color: showScorecard ? "#0a4a3a" : "inherit",
+                      fontWeight: showScorecard ? 600 : 400,
                     }}
                   >
-                    {event?.teamA}
+                    Scorecard
                   </Typography>
                 </Box>
                 <Box
                   sx={{
                     width: "100%",
                     textAlign: "center",
-                    backgroundColor: currTeam === 2 ? "#e6e8f0" : "none",
                     padding: "10px",
                   }}
-                  onClick={() => handleTeam(2)}
+                  onClick={() => setShowScorecard(false)}
                 >
                   <Typography
                     sx={{
                       fontSize: "17px",
-                      color: currTeam === 2 ? "#0a4a3a" : "inherit",
-                      fontWeight: currTeam === 2 ? 600 : 400,
+                      color: !showScorecard ? "#0a4a3a" : "inherit",
+                      fontWeight: !showScorecard ? 600 : 400,
                     }}
                   >
-                    {event?.teamB}
+                    Summary
                   </Typography>
                 </Box>
               </Box>
-              <CardContent sx={{ padding: "0px 30px 30px 30px" }}>
-                {/* <Typography>Scorecard</Typography> */}
-                <Box
-                  sx={{
-                    marginBottom: "20px",
-                    display: "flex",
-                    justifyContent: "space-evenly",
-                  }}
-                >
-                  <Typography
-                    sx={{
-                      fontWeight: 600,
-                      fontSize: "16px",
-                      color: "#17a8b0",
-                    }}
-                  >
-                    Score : {getScore()}
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontWeight: 600,
-                      fontSize: "16px",
-                      color: "#17a8b0",
-                    }}
-                  >
-                    Overs : {getOvers()}
-                  </Typography>
-                </Box>
-                <Table>
-                  <TableRow sx={{ backgroundColor: "#F6F9FC" }}>
-                    <TableCell
-                      sx={{
-                        color: "#8898aa",
-                        fontWeight: 600,
-                        fontSize: "17px",
-                      }}
-                    >
-                      Batting
-                    </TableCell>
-                    <TableCell
-                      sx={{
-                        color: "#8898aa",
-                        fontWeight: 600,
-                        fontSize: "17px",
-                      }}
-                    >
-                      Runs scored
-                    </TableCell>
-                    <TableCell
-                      sx={{
-                        color: "#8898aa",
-                        fontWeight: 600,
-                        fontSize: "17px",
-                      }}
-                    >
-                      Balls faced
-                    </TableCell>
-                  </TableRow>
-                  <TableBody>
-                    {selectedTeam &&
-                      selectedTeam.map((member, ind) => (
-                        <TableRow key={ind}>
-                          <TableCell
-                            sx={{ fontSize: "17px", color: "#2e3837" }}
-                          >
-                            {member?.name}
-                          </TableCell>
-                          <TableCell
-                            sx={{ fontSize: "17px", color: "#2e3837" }}
-                          >
-                            {member?.batting?.score}
-                          </TableCell>
-                          <TableCell
-                            sx={{ fontSize: "17px", color: "#2e3837" }}
-                          >
-                            {member?.batting?.overs}
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                  </TableBody>
-                </Table>
-                {event.status === "Finished" && (
+              {showScorecard ? (
+                <>
                   <Box
                     sx={{
+                      width: "100%",
                       display: "flex",
                       justifyContent: "space-evenly",
-                      alignItems: "center",
-                      margin: "auto",
+                      cursor: "pointer",
+                      marginBottom: "20px",
                     }}
                   >
-                    <Typography
+                    <Box
                       sx={{
-                        color: "#007306",
-                        fontSize: "18px",
-                        fontWeight: 600,
+                        width: "100%",
                         textAlign: "center",
-                        marginTop: "20px",
+                        backgroundColor: currTeam === 1 ? "#e6e8f0" : "none",
+                        padding: "10px",
+                      }}
+                      onClick={() => handleTeam(1)}
+                    >
+                      <Typography
+                        sx={{
+                          fontSize: "17px",
+                          color: currTeam === 1 ? "#0a4a3a" : "inherit",
+                          fontWeight: currTeam === 1 ? 600 : 400,
+                        }}
+                      >
+                        {event?.teamA}
+                      </Typography>
+                    </Box>
+                    <Box
+                      sx={{
+                        width: "100%",
+                        textAlign: "center",
+                        backgroundColor: currTeam === 2 ? "#e6e8f0" : "none",
+                        padding: "10px",
+                      }}
+                      onClick={() => handleTeam(2)}
+                    >
+                      <Typography
+                        sx={{
+                          fontSize: "17px",
+                          color: currTeam === 2 ? "#0a4a3a" : "inherit",
+                          fontWeight: currTeam === 2 ? 600 : 400,
+                        }}
+                      >
+                        {event?.teamB}
+                      </Typography>
+                    </Box>
+                  </Box>
+                  <CardContent sx={{ padding: "0px 30px 30px 30px" }}>
+                    {/* <Typography>Scorecard</Typography> */}
+                    <Box
+                      sx={{
+                        marginBottom: "20px",
+                        display: "flex",
+                        justifyContent: "space-evenly",
                       }}
                     >
-                      {getMessage()}
-                    </Typography>
-                  </Box>
-                )}
-              </CardContent>
+                      <Typography
+                        sx={{
+                          fontWeight: 600,
+                          fontSize: "16px",
+                          color: "#17a8b0",
+                        }}
+                      >
+                        Score : {getScore()}
+                      </Typography>
+                      <Typography
+                        sx={{
+                          fontWeight: 600,
+                          fontSize: "16px",
+                          color: "#17a8b0",
+                        }}
+                      >
+                        Overs : {getOvers()}
+                      </Typography>
+                    </Box>
+                    <Table>
+                      <TableRow sx={{ backgroundColor: "#F6F9FC" }}>
+                        <TableCell
+                          sx={{
+                            color: "#8898aa",
+                            fontWeight: 600,
+                            fontSize: "17px",
+                          }}
+                        >
+                          Batting
+                        </TableCell>
+                        <TableCell
+                          sx={{
+                            color: "#8898aa",
+                            fontWeight: 600,
+                            fontSize: "17px",
+                          }}
+                        >
+                          Runs scored
+                        </TableCell>
+                        <TableCell
+                          sx={{
+                            color: "#8898aa",
+                            fontWeight: 600,
+                            fontSize: "17px",
+                          }}
+                        >
+                          Balls faced
+                        </TableCell>
+                      </TableRow>
+                      <TableBody>
+                        {selectedTeam &&
+                          selectedTeam.map((member, ind) => (
+                            <TableRow key={ind}>
+                              <TableCell
+                                sx={{ fontSize: "17px", color: "#2e3837" }}
+                              >
+                                {member?.name}
+                              </TableCell>
+                              <TableCell
+                                sx={{ fontSize: "17px", color: "#2e3837" }}
+                              >
+                                {member?.batting?.score}
+                              </TableCell>
+                              <TableCell
+                                sx={{ fontSize: "17px", color: "#2e3837" }}
+                              >
+                                {member?.batting?.overs}
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                      </TableBody>
+                    </Table>
+                    {event.status === "Finished" && (
+                      <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "space-evenly",
+                          alignItems: "center",
+                          margin: "auto",
+                        }}
+                      >
+                        <Typography
+                          sx={{
+                            color: "#007306",
+                            fontSize: "18px",
+                            fontWeight: 600,
+                            textAlign: "center",
+                            marginTop: "20px",
+                          }}
+                        >
+                          {getMessage()}
+                        </Typography>
+                      </Box>
+                    )}
+                  </CardContent>
+                </>
+              ) : (
+                <List sx={{ overflow: "auto", maxHeight: "600px" }}>
+                  {summary &&
+                    summary.map((comment, ind) => (
+                      <ListItem alignItems="center">
+                        <ListItemAvatar>
+                          <Avatar
+                            sx={{
+                              fontSize: "16px",
+                              backgroundColor: "#008080",
+                            }}
+                          >
+                            {comment.over}
+                          </Avatar>
+                        </ListItemAvatar>
+                        <ListItemText primary={getComment(comment)} />
+                      </ListItem>
+                    ))}
+                </List>
+              )}
             </Card>
             <Card sx={{ height: "100%", width: "100%", minWidth: "400px" }}>
               <CardContent>

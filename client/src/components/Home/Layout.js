@@ -63,12 +63,14 @@ const CardDetails = ({ name }) => {
         alt="green iguana"
       />
       <CardContent>
-        <Typography sx={{ fontSize: "24px", fontWeight: 600 }}>
+        <Typography
+          sx={{ fontSize: "24px", fontWeight: 600, textAlign: "center" }}
+        >
           {name}
         </Typography>
-        <Typography sx={{ fontSize: "18px", fontWeight: 400 }}>
+        {/* <Typography sx={{ fontSize: "18px", fontWeight: 400 }}>
           Total events : 4
-        </Typography>
+        </Typography> */}
       </CardContent>
     </Card>
   );

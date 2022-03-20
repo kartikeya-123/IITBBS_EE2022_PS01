@@ -32,6 +32,10 @@ import {
   Select,
   InputBase,
   MenuItem,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
 } from "@mui/material";
 import { getOverlappingDaysInIntervals } from "date-fns";
 import { styled } from "@mui/material/styles";
@@ -69,6 +73,8 @@ const BootstrapInput = styled(InputBase)(({ theme }) => ({
   },
 }));
 
+const colors = ["#008080", "#40e0d0", "#00ffff", "#00ffff", "#bada55"];
+
 const CricketPageLayout = () => {
   const { matchId } = useParams();
   const [event, setEvent] = useState(null);
@@ -84,6 +90,8 @@ const CricketPageLayout = () => {
   const [currentBowler, setCurrentBowler] = useState(0);
   const [newOver, setNewOver] = useState(false);
 
+  const [showScorecard, setShowScorecard] = useState(true);
+  const [summary, setSummary] = useState(null);
   const initData = async () => {
     // const cricketRef = collection(db, "Cricket");
     const eventRef = doc(db, "Cricket", matchId);
@@ -91,6 +99,7 @@ const CricketPageLayout = () => {
       const eventData = data.data();
       setEvent(eventData);
       setCurrentBowler(eventData?.currentBowler);
+      setSummary(eventData.summary);
       if (eventData?.innings === 1) {
         setCurrTeam(1);
         setCurrentInnings(eventData?.playersA);
@@ -178,19 +187,30 @@ const CricketPageLayout = () => {
     if (data?.innings === 1) {
       if (out === -1) {
         // Not out
+        let batsman;
         if (data?.strike === 1) {
           data.playersA[data?.batsman1].batting.score += currentRun;
           data.playersA[data?.batsman1].batting.overs++;
+          batsman = data.playersA[data?.batsman1].name;
         } else {
           data.playersA[data?.batsman2].batting.score += currentRun;
           data.playersA[data?.batsman2].batting.overs++;
+          batsman = data.playersA[data?.batsman2].name;
         }
-
+        let over = data.firstInningsOvers;
         data.firstInningsOvers = newOvers(data?.firstInningsOvers);
 
         data.firstInningsScore += currentRun;
         console.log(data.playersB[currentBowler]);
         data.playersB[currentBowler].bowling.score += currentRun;
+
+        const summary = {
+          text: currentRun,
+          batsman: batsman,
+          bowler: data.playersB[currentBowler].name,
+          over: over,
+        };
+        data.summary = [summary, ...data.summary];
 
         if ((currentRun % 2 !== 0) ^ checkNewOver(data?.firstInningsOvers)) {
           if (data.strike === 1) data.strike = 2;
@@ -199,18 +219,29 @@ const CricketPageLayout = () => {
         data.currentBowler = currentBowler;
       } else {
         const newBatsman = Math.max(data.batsman1, data.batsman2) + 1;
-
+        let batsman;
         if (data?.strike === 1) {
+          batsman = data.playersA[data?.batsman1].name;
           data.playersA[data?.batsman1].batting.overs++;
           data.batsman1 = newBatsman;
         } else {
+          batsman = data.playersA[data?.batsman2].name;
           data.playersA[data.batsman2].batting.overs++;
           data.batsman2 = newBatsman;
         }
-
+        let over = data.firstInningsOvers;
         data.firstInningsOvers = newOvers(data?.firstInningsOvers);
         data.firstInningsWickets++;
         data.playersB[currentBowler].bowling.wickets++;
+
+        const summary = {
+          text: "W",
+          batsman: batsman,
+          bowler: data.playersB[currentBowler].name,
+          over: over,
+        };
+        data.summary = [summary, ...data.summary];
+
         if ((currentRun % 2 !== 0) ^ checkNewOver(data?.firstInningsOvers)) {
           if (data.strike === 1) data.strike = 2;
           else data.strike = 1;
@@ -220,18 +251,30 @@ const CricketPageLayout = () => {
     } else {
       if (out === -1) {
         // Not out
+        let batsman;
         if (data?.strike === 1) {
           data.playersB[data?.batsman1].batting.score += currentRun;
           data.playersB[data?.batsman1].batting.overs++;
+          batsman = data.playersB[data?.batsman1].name;
         } else {
           data.playersB[data?.batsman2].batting.score += currentRun;
           data.playersB[data?.batsman2].batting.overs++;
+          batsman = data.playersB[data?.batsman2].name;
         }
-
+        let over = data.secondInningsOvers;
         data.secondInningsOvers = newOvers(data?.secondInningsOvers);
 
         data.secondInningsScore += currentRun;
         data.playersA[currentBowler].bowling.score += currentRun;
+
+        const summary = {
+          text: currentRun,
+          batsman: batsman,
+          bowler: data.playersA[currentBowler].name,
+          over: over,
+        };
+        data.summary = [summary, ...data.summary];
+
         if ((currentRun % 2 !== 0) ^ checkNewOver(data?.secondInningsOvers)) {
           if (data.strike === 1) data.strike = 2;
           else data.strike = 1;
@@ -239,18 +282,30 @@ const CricketPageLayout = () => {
         data.currentBowler = currentBowler;
       } else {
         const newBatsman = Math.max(data.batsman1, data.batsman2) + 1;
-
+        let batsman;
         if (data?.strike === 1) {
           data.playersB[data?.batsman1].batting.overs++;
           data.batsman1 = newBatsman;
+          batsman = data.playersB[data?.batsman1].name;
         } else {
           data.playersB[data.batsman2].batting.overs++;
           data.batsman2 = newBatsman;
+          batsman = data.playersB[data?.batsman2].name;
         }
+        let over = data.secondInningsOvers;
 
         data.secondInningsOvers = newOvers(data?.secondInningsOvers);
         data.secondInningsWickets++;
         data.playersA[currentBowler].bowling.wickets++;
+
+        const summary = {
+          text: "W",
+          batsman: batsman,
+          bowler: data.playersA[currentBowler].name,
+          over,
+        };
+        data.summary = [summary, ...data.summary];
+
         if ((currentRun % 2 !== 0) ^ checkNewOver(data?.secondInningsOvers)) {
           if (data.strike === 1) data.strike = 2;
           else data.strike = 1;
@@ -321,6 +376,11 @@ const CricketPageLayout = () => {
   //        )
   //   }
 
+  const getColor = () => {
+    let n = colors.length;
+    let ind = Math.floor(Math.random() * 100) % n;
+    return colors[ind];
+  };
   const getMessage = () => {
     let message = "";
     if (event?.status === "Finished") {
@@ -332,10 +392,31 @@ const CricketPageLayout = () => {
     }
     return message;
   };
+
+  const getComment = (comment) => {
+    let add = "";
+    if (comment?.text === "W") add = "Wicket";
+    else add = `${comment.text} run`;
+
+    let message = `${comment.bowler} bowling to ${comment.batsman}, ${add} `;
+    return message;
+  };
   return (
     <div>
       {event && (
         <Grid>
+          {/* <Container>
+            <Box
+              sx={{
+                width: "100%",
+                display: "flex",
+                justifyContent: "space-evenly",
+              }}
+            >
+              <Typography>Scorecard</Typography>
+              <Typography>Scorecard</Typography>
+            </Box>
+          </Container> */}
           <Container
             sx={{
               padding: "40px",
@@ -368,122 +449,191 @@ const CricketPageLayout = () => {
                   sx={{
                     width: "100%",
                     textAlign: "center",
-                    backgroundColor: currTeam === 1 ? "#e6e8f0" : "none",
                     padding: "10px",
                   }}
-                  onClick={() => handleTeam(1)}
+                  onClick={() => setShowScorecard(true)}
                 >
                   <Typography
                     sx={{
                       fontSize: "17px",
-                      color: currTeam === 1 ? "#0a4a3a" : "inherit",
-                      fontWeight: currTeam === 1 ? 600 : 400,
+                      color: showScorecard ? "#0a4a3a" : "inherit",
+                      fontWeight: showScorecard ? 600 : 400,
                     }}
                   >
-                    {event?.teamA}
+                    Scorecard
                   </Typography>
                 </Box>
                 <Box
                   sx={{
                     width: "100%",
                     textAlign: "center",
-                    backgroundColor: currTeam === 2 ? "#e6e8f0" : "none",
                     padding: "10px",
                   }}
-                  onClick={() => handleTeam(2)}
+                  onClick={() => setShowScorecard(false)}
                 >
                   <Typography
                     sx={{
                       fontSize: "17px",
-                      color: currTeam === 2 ? "#0a4a3a" : "inherit",
-                      fontWeight: currTeam === 2 ? 600 : 400,
+                      color: !showScorecard ? "#0a4a3a" : "inherit",
+                      fontWeight: !showScorecard ? 600 : 400,
                     }}
                   >
-                    {event?.teamB}
+                    Summary
                   </Typography>
                 </Box>
               </Box>
-              <CardContent sx={{ padding: "0px 30px 30px 30px" }}>
-                <Box
-                  sx={{
-                    marginBottom: "20px",
-                    display: "flex",
-                    justifyContent: "space-evenly",
-                  }}
-                >
-                  <Typography
+              {showScorecard ? (
+                <>
+                  <Box
                     sx={{
-                      fontWeight: 600,
-                      fontSize: "16px",
-                      color: "#17a8b0",
+                      width: "100%",
+                      display: "flex",
+                      justifyContent: "space-evenly",
+                      cursor: "pointer",
+                      marginBottom: "20px",
                     }}
                   >
-                    Score : {getScore(currTeam)}
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontWeight: 600,
-                      fontSize: "16px",
-                      color: "#17a8b0",
-                    }}
-                  >
-                    Overs : {getOvers(currTeam)}
-                  </Typography>
-                </Box>
-                <Table>
-                  <TableRow sx={{ backgroundColor: "#F6F9FC" }}>
-                    <TableCell
+                    <Box
                       sx={{
-                        color: "#8898aa",
-                        fontWeight: 600,
-                        fontSize: "17px",
+                        width: "100%",
+                        textAlign: "center",
+                        backgroundColor: currTeam === 1 ? "#e6e8f0" : "none",
+                        padding: "10px",
+                      }}
+                      onClick={() => handleTeam(1)}
+                    >
+                      <Typography
+                        sx={{
+                          fontSize: "17px",
+                          color: currTeam === 1 ? "#0a4a3a" : "inherit",
+                          fontWeight: currTeam === 1 ? 600 : 400,
+                        }}
+                      >
+                        {event?.teamA}
+                      </Typography>
+                    </Box>
+                    <Box
+                      sx={{
+                        width: "100%",
+                        textAlign: "center",
+                        backgroundColor: currTeam === 2 ? "#e6e8f0" : "none",
+                        padding: "10px",
+                      }}
+                      onClick={() => handleTeam(2)}
+                    >
+                      <Typography
+                        sx={{
+                          fontSize: "17px",
+                          color: currTeam === 2 ? "#0a4a3a" : "inherit",
+                          fontWeight: currTeam === 2 ? 600 : 400,
+                        }}
+                      >
+                        {event?.teamB}
+                      </Typography>
+                    </Box>
+                  </Box>
+                  <CardContent sx={{ padding: "0px 30px 30px 30px" }}>
+                    <Box
+                      sx={{
+                        marginBottom: "20px",
+                        display: "flex",
+                        justifyContent: "space-evenly",
                       }}
                     >
-                      Batting
-                    </TableCell>
-                    <TableCell
-                      sx={{
-                        color: "#8898aa",
-                        fontWeight: 600,
-                        fontSize: "17px",
-                      }}
-                    >
-                      Runs scored
-                    </TableCell>
-                    <TableCell
-                      sx={{
-                        color: "#8898aa",
-                        fontWeight: 600,
-                        fontSize: "17px",
-                      }}
-                    >
-                      Balls faced
-                    </TableCell>
-                  </TableRow>
-                  <TableBody>
-                    {selectedTeam &&
-                      selectedTeam.map((member, ind) => (
-                        <TableRow key={ind}>
-                          <TableCell
-                            sx={{ fontSize: "17px", color: "#2e3837" }}
+                      <Typography
+                        sx={{
+                          fontWeight: 600,
+                          fontSize: "16px",
+                          color: "#17a8b0",
+                        }}
+                      >
+                        Score : {getScore(currTeam)}
+                      </Typography>
+                      <Typography
+                        sx={{
+                          fontWeight: 600,
+                          fontSize: "16px",
+                          color: "#17a8b0",
+                        }}
+                      >
+                        Overs : {getOvers(currTeam)}
+                      </Typography>
+                    </Box>
+                    <Table>
+                      <TableRow sx={{ backgroundColor: "#F6F9FC" }}>
+                        <TableCell
+                          sx={{
+                            color: "#8898aa",
+                            fontWeight: 600,
+                            fontSize: "17px",
+                          }}
+                        >
+                          Batting
+                        </TableCell>
+                        <TableCell
+                          sx={{
+                            color: "#8898aa",
+                            fontWeight: 600,
+                            fontSize: "17px",
+                          }}
+                        >
+                          Runs scored
+                        </TableCell>
+                        <TableCell
+                          sx={{
+                            color: "#8898aa",
+                            fontWeight: 600,
+                            fontSize: "17px",
+                          }}
+                        >
+                          Balls faced
+                        </TableCell>
+                      </TableRow>
+                      <TableBody>
+                        {selectedTeam &&
+                          selectedTeam.map((member, ind) => (
+                            <TableRow key={ind}>
+                              <TableCell
+                                sx={{ fontSize: "17px", color: "#2e3837" }}
+                              >
+                                {member?.name}
+                              </TableCell>
+                              <TableCell
+                                sx={{ fontSize: "17px", color: "#2e3837" }}
+                              >
+                                {member?.batting?.score}
+                              </TableCell>
+                              <TableCell
+                                sx={{ fontSize: "17px", color: "#2e3837" }}
+                              >
+                                {member?.batting?.overs}
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                      </TableBody>
+                    </Table>
+                  </CardContent>
+                </>
+              ) : (
+                <List sx={{ overflow: "auto", maxHeight: "600px" }}>
+                  {summary &&
+                    summary.map((comment, ind) => (
+                      <ListItem alignItems="center">
+                        <ListItemAvatar>
+                          <Avatar
+                            sx={{
+                              fontSize: "16px",
+                              backgroundColor: "#008080",
+                            }}
                           >
-                            {member?.name}
-                          </TableCell>
-                          <TableCell
-                            sx={{ fontSize: "17px", color: "#2e3837" }}
-                          >
-                            {member?.batting?.score}
-                          </TableCell>
-                          <TableCell
-                            sx={{ fontSize: "17px", color: "#2e3837" }}
-                          >
-                            {member?.batting?.overs}
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
+                            {comment.over}
+                          </Avatar>
+                        </ListItemAvatar>
+                        <ListItemText primary={getComment(comment)} />
+                      </ListItem>
+                    ))}
+                </List>
+              )}
             </Card>
             <Card
               sx={{

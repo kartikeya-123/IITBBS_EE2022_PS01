@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Grid,
   Box,
@@ -14,6 +14,12 @@ import { useNavigate } from "react-router-dom";
 import getImage from "../../assets/images";
 
 const Layout = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!localStorage.getItem("isLoggedIn")) navigate("/login");
+  }, []);
+
   return (
     <div>
       <Grid sx={{ width: "100%", paddingBottom: "30px" }}>
@@ -62,13 +68,20 @@ const CardDetails = ({ name }) => {
         image={image}
         alt="green iguana"
       />
-      <CardContent>
-        <Typography sx={{ fontSize: "24px", fontWeight: 600 }}>
+      <CardContent sx={{ flexDirection: "column", gap: "20px" }}>
+        <Typography
+          sx={{
+            fontSize: "24px",
+            fontWeight: 600,
+            textAlign: "center",
+            color: "#2D322E",
+          }}
+        >
           {name}
         </Typography>
-        <Typography sx={{ fontSize: "18px", fontWeight: 400 }}>
+        {/* <Typography sx={{ fontSize: "18px", fontWeight: 400 }}>
           Total events : 4
-        </Typography>
+        </Typography> */}
       </CardContent>
     </Card>
   );

@@ -1,10 +1,11 @@
-import boxShadows from "assets/theme/box-shadow.js";
+import themeColors from "../../colors";
+import boxShadows from "./../../box-shadow";
 
 const componentStyles = (theme) => ({
   cardRoot: {
     boxShadow: boxShadows.boxShadow + "!important",
     border: "0!important",
-    backgroundColor: theme.palette.secondary.main,
+    backgroundColor: themeColors.secondary.main,
   },
   cardHeader: {
     backgroundColor: "initial",
@@ -19,14 +20,14 @@ const componentStyles = (theme) => ({
     borderStyle: "none",
   },
   buttonRoot: {
-    backgroundColor: theme.palette.white.main,
-    color: theme.palette.primary.main,
+    backgroundColor: themeColors.white.main,
+    color: themeColors.primary.main,
     boxShadow: boxShadows.buttonBoxShadowNeutral,
-    borderColor: theme.palette.white.main + "!important",
+    borderColor: themeColors.white.main + "!important",
     "&:hover": {
-      color: theme.palette.gray[900],
-      borderColor: theme.palette.white.main + "!important",
-      backgroundColor: theme.palette.white.main,
+      color: themeColors.gray[900],
+      borderColor: themeColors.white.main + "!important",
+      backgroundColor: themeColors.white.main,
     },
   },
   formControlLabelRoot: {
@@ -41,10 +42,10 @@ const componentStyles = (theme) => ({
     position: "relative",
     verticalAlign: "top",
     display: "inline-block",
-    color: theme.palette.gray[600],
+    color: themeColors.gray[600],
   },
   footerLinks: {
-    color: theme.palette.gray[400],
+    color: themeColors.gray[400],
     textDecoration: "none",
   },
 });

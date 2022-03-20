@@ -109,6 +109,7 @@ const SportsLayout = () => {
     data.matchFinished = 0;
     data.currentBowler = 0;
     data.status = "Live";
+    data.summary = [];
     // Data
     console.log(data);
 
