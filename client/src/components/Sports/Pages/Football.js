@@ -171,8 +171,9 @@ const [n,setn]=useState("")
                   onClick={() => handleTeam(2)}
                 >
                   <Typography>{event?.teamB}</Typography>
-                </Box>
+                </Box> 
               </Box>}
+              <Box sx={{overflowY:"auto"}}>
               {(sco==2 &&com.length>0)&& <Box sx={{display:"flex",top:"50px",flexDirection:"column",position:"relative",padding:"10px",gap:"1rem"}}>
                       {com.map(({com,team})=><Box sx={{marginLeft:"20px",padding:"4px",color:"GrayText",display:"flex",flexDirection:"row",alignItems:"center",gap:"1rem"}}>
                         <Avatar sx={{ background:team===event.teamA?"#008080":"#228B22",fontSize:"15px"	}}>{team}</Avatar>{com}...</Box>)}
@@ -180,6 +181,7 @@ const [n,setn]=useState("")
                     </Box>
 
               }
+              </Box>
            { sco===1&&<CardContent sx={{ padding: "0px 30px 30px 30px" }}>
                 <Typography>Scorecard</Typography>
                 <Table>
