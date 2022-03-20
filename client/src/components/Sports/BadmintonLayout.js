@@ -20,22 +20,15 @@ import {
   getDoc,
   onSnapshot,
 } from "firebase/firestore";
-import AddIcon from "@mui/icons-material/Add";
-import CricketEventForm from "../Modals/CricketModal";
 
 const SportsLayout = () => {
   const { sportName } = useParams();
   const [events, setEvents] = useState([]);
-  const [showForm, setShowForm] = useState(false);
-
-  const handleClose = () => {
-    setShowForm(false);
-  };
 
   const initData = async () => {
-    const cricketRef = collection(db, "Cricket");
-    // console.log(cricketRef);
-    onSnapshot(cricketRef, (data) => {
+    const badmintonRef = collection(db, "Badminton");
+    // console.log(badmintonRef);
+    onSnapshot(badmintonRef, (data) => {
       const eventDocs = data.docs.map((element) => {
         const event = {
           id: element.id,
@@ -43,78 +36,11 @@ const SportsLayout = () => {
         };
         return event;
       });
-      // console.log(eventDocs);
+      console.log(eventDocs);
       setEvents(eventDocs);
     });
 
     //setDocs
-  };
-
-  const submitToFirebase = async (data) => {
-    const cricketRef = collection(db, "Cricket");
-    await setDoc(doc(cricketRef), data);
-  };
-
-  const submitData = async (values) => {
-    let data = values;
-    let data1;
-    data1 = values.playersA.map((player) => {
-      let newFields = {
-        name: player,
-        batting: {
-          score: 0,
-          overs: 0,
-        },
-        bowling: {
-          wickets: 0,
-          overs: 0,
-          score: 0,
-        },
-      };
-
-      return newFields;
-    });
-
-    let data2;
-    data2 = values.playersB.map((player) => {
-      let newFields = {
-        name: player,
-        batting: {
-          score: 0,
-          overs: 0,
-        },
-        bowling: {
-          wickets: 0,
-          overs: 0,
-          score: 0,
-        },
-      };
-      return newFields;
-    });
-
-    data.playersA = data1;
-    data.playersB = data2;
-    data.innings = 1;
-    data.teamAScore = 0;
-    data.teamBScore = 0;
-    data.batsman1 = 0;
-    data.batsman2 = 1;
-    data.strike = 1;
-    data.firstInningsScore = 0;
-    data.secondInningsScore = 0;
-    data.firstInningsWickets = 0;
-    data.secondInningsWickets = 0;
-    data.firstInningsOvers = 0;
-    data.secondInningsOvers = 0;
-    data.matchFinished = 0;
-    data.currentBowler = 0;
-    data.status = "Live";
-    // Data
-    console.log(data);
-
-    // Firebase post
-    handleClose();
-    await submitToFirebase(data);
   };
 
   useEffect(() => {
@@ -142,28 +68,12 @@ const SportsLayout = () => {
           >
             FEATURED MATCHES - {sportName}
           </Typography>
-          <Fab
-            color="primary"
-            aria-label="add"
-            onClick={() => {
-              setShowForm(true);
-            }}
-          >
-            <AddIcon />
-          </Fab>
         </Box>
         <Grid container spacing={2}>
           {events &&
             events.map((event) => <SportEvent event={event} key={event.id} />)}
         </Grid>
       </Paper>
-      {showForm && (
-        <CricketEventForm
-          show={showForm}
-          close={handleClose}
-          submit={submitData}
-        />
-      )}
     </Grid>
   );
 };
@@ -173,8 +83,9 @@ const SportEvent = (event) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(`/sport/Cricket/${event?.event?.id}`);
+    navigate(`/sport/Badminton/${event?.event?.id}`);
   };
+
   return (
     <Grid item>
       <Card
@@ -196,7 +107,6 @@ const SportEvent = (event) => {
                 fontSize: "20px",
                 fontWeight: 600,
                 textTransform: "uppercase",
-                color: "#004d2a",
               }}
             >
               {event?.event?.data?.name}
@@ -210,7 +120,7 @@ const SportEvent = (event) => {
           >
             <Typography
               sx={{
-                fontSize: "18px",
+                fontSize: "20px",
                 fontWeight: 600,
                 color: "#142d52",
               }}

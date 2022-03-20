@@ -75,7 +75,7 @@ const InputField = styled(InputLabel)(({ theme }) => ({
   paddingBottom: "5px",
 }));
 
-const CricketEventForm = ({ show, close, submit }) => {
+const BadmintonModal = ({ show, close, submit }) => {
   const classes = useStyles();
   const [open, setOpen] = useState(show);
   const [values, setValues] = useState({
@@ -85,7 +85,6 @@ const CricketEventForm = ({ show, close, submit }) => {
     playersA: [],
     teamB: "",
     playersB: [],
-    overs: 0,
   });
 
   const [playerA, setPlayerA] = useState("");
@@ -122,8 +121,8 @@ const CricketEventForm = ({ show, close, submit }) => {
       values.name.length === 0 ||
       values.teamA.length === 0 ||
       values.teamB.length === 0 ||
-      values.playersA.length <= 2 ||
-      values.playersB.length <= 2
+      values.playersA.length === 0 ||
+      values.playersB.length === 0
     );
   };
 
@@ -132,7 +131,7 @@ const CricketEventForm = ({ show, close, submit }) => {
       <Card className={classes.card}>
         <CardContent className={classes.cardContent}>
           <Box className={classes.center}>
-            <Heading>New Cricket event</Heading>
+            <Heading>New Badminton event</Heading>
           </Box>
 
           <Box className={classes.box}>
@@ -225,6 +224,7 @@ const CricketEventForm = ({ show, close, submit }) => {
               onChange={(event) => {
                 setPlayerA(event.target.value);
               }}
+              disabled={values.playersA.length > 0}
             />
           </Box>
           <Box className={classes.box}>
@@ -274,19 +274,7 @@ const CricketEventForm = ({ show, close, submit }) => {
               onChange={(event) => {
                 setPlayerB(event.target.value);
               }}
-            />
-          </Box>
-          <Box className={classes.box}>
-            <InputField>Overs</InputField>
-            <TextField
-              onChange={handleChange}
-              variant="filled"
-              name="overs"
-              style={{ width: "100%", backgroundColor: "#F8F8F8" }}
-              placeholder="Team name"
-              value={values.overs}
-              InputProps={{ disableUnderline: true }}
-              multiline
+              disabled={values.playersB.length > 0}
             />
           </Box>
         </CardContent>
@@ -311,11 +299,12 @@ const CricketEventForm = ({ show, close, submit }) => {
                   backgroundColor: "#455187",
                 },
                 "&:disabled": {
-                  color: "#FFFFFF",
+                  color: "red",
                   backgroundColor: "black",
                 },
                 border: "none",
               }}
+              variant="contained"
               onClick={handleSubmit}
               //   disabled={checkDisabled}
             >
@@ -328,4 +317,4 @@ const CricketEventForm = ({ show, close, submit }) => {
   );
 };
 
-export default CricketEventForm;
+export default BadmintonModal;

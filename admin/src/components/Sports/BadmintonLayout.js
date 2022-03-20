@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   Grid,
   Box,
@@ -21,7 +21,7 @@ import {
   onSnapshot,
 } from "firebase/firestore";
 import AddIcon from "@mui/icons-material/Add";
-import CricketEventForm from "../Modals/CricketModal";
+import BadmintonEventForm from "../Modals/BadmintonModal";
 
 const SportsLayout = () => {
   const { sportName } = useParams();
@@ -61,14 +61,7 @@ const SportsLayout = () => {
     data1 = values.playersA.map((player) => {
       let newFields = {
         name: player,
-        batting: {
-          score: 0,
-          overs: 0,
-        },
-        bowling: {
-          wickets: 0,
-          overs: 0,
-        },
+        scores: [0, 0, 0],
       };
 
       return newFields;
@@ -78,20 +71,16 @@ const SportsLayout = () => {
     data2 = values.playersB.map((player) => {
       let newFields = {
         name: player,
-        batting: {
-          score: 0,
-          overs: 0,
-        },
-        bowling: {
-          wickets: 0,
-          overs: 0,
-        },
+        scores: [0, 0, 0],
       };
       return newFields;
     });
 
     data.playersA = data1;
     data.playersB = data2;
+    data.currentSet = 1;
+    data.status = "Live";
+    data.results = [-1, -1, -1];
     // Data
     console.log(data);
 
@@ -141,7 +130,7 @@ const SportsLayout = () => {
         </Grid>
       </Paper>
       {showForm && (
-        <CricketEventForm
+        <BadmintonEventForm
           show={showForm}
           close={handleClose}
           submit={submitData}
@@ -153,16 +142,23 @@ const SportsLayout = () => {
 
 const SportEvent = (event) => {
   const date = event?.event?.data?.time.toDate().toDateString();
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(`/sport/Badminton/${event?.event?.id}`);
+  };
 
   return (
     <Grid item>
       <Card
         sx={{
-          width: "350px",
+          width: "400px",
           height: "150px",
           borderRadius: "0px",
           boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
+          cursor: "pointer",
         }}
+        onClick={handleClick}
       >
         <CardContent>
           <Box
